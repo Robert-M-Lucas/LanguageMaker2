@@ -3,6 +3,7 @@ from Database.Database import Database
 from .WordSelector import WordSelector
 from .SynonymManager import SynonymManager
 from .WordManager import WordManager
+from Translator import Translate
 
 
 class MainGui:
@@ -25,12 +26,18 @@ class MainGui:
         self.right.grid(row=0, column=1)
 
         Label(self.left, text="Text in").pack()
-        Text(self.left, width=40, height=15).pack()
+        self.text_in = Text(self.left, width=40, height=15)
+        self.text_in.pack()
 
         Label(self.right, text="Translated text").pack()
-        Text(self.right, width=40, height=15).pack()
+        self.trans_text = Text(self.right, width=40, height=15)
+        self.trans_text.pack()
 
         Button(self.left, text=f"English to {lang}").pack(fill=X)
-        Button(self.right, text=f"{lang} to English").pack(fill=X)
+        Button(self.right, text=f"{lang} to English", command=self.translate).pack(fill=X)
 
         self.master.mainloop()
+
+    def translate(self):
+        self.trans_text.delete('1.0', END)
+        self.trans_text.insert('1.0', Translate(self.text_in.get("1.0", END), self.database))
