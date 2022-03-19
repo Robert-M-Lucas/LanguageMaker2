@@ -32,7 +32,7 @@ class WordManager:
         self.word_name_eng_str = StringVar(self.top, value=self.word.phonetic_eng)
         Entry(self.left, textvariable=self.word_name_eng_str).pack(fill=X)
         Label(self.left, text=f"{lang} synonyms").pack(fill=X)
-        Button(self.left, text="Synonym manager").pack(fill=X)
+        Button(self.left, text="Synonym manager", command=lambda: SynonymManager(self, lang)).pack(fill=X)
         Label(self.left, text=f"English synonyms").pack(fill=X)
         Button(self.left, text="Synonym manager", command=lambda: SynonymManager(self, "")).pack(fill=X)
 

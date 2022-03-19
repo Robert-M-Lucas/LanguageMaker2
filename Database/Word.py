@@ -12,7 +12,17 @@ class Word:
         self.phonetic_eng = db_data[1]
         self.description = db_data[2]
         self.lang_synonyms = db_data[3].split(";")
+        while True:
+            try:
+                self.lang_synonyms.remove('')
+            except ValueError:
+                break
         self.eng_synonyms = db_data[4].split(";")
+        while True:
+            try:
+                self.eng_synonyms.remove('')
+            except ValueError:
+                break
 
     def __str__(self):
         _str = f"""Name: {self.name}

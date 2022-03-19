@@ -28,8 +28,8 @@ class WordSelector:
     def get_new(self):
         InputPopup(self.top, self.create_word, "Enter new word name:")
 
-    def create_word(self, word_name):
-        self.main_gui.database.AddWord(word_name)
+    def create_word(self, word_name: str):
+        self.main_gui.database.AddWord(word_name.replace(" ", "_"))
         self.update_words()
 
     def update_words(self):

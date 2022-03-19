@@ -12,9 +12,7 @@ class SynonymManager:
             self.syn_list = word_manager.word.eng_synonyms
         else:
             window_name = f"{mode} Synonyms"
-            self.syn_list = word_manager.word.eng_synonyms
-
-        print(self.syn_list)
+            self.syn_list = word_manager.word.lang_synonyms
 
         self.top = Toplevel(word_manager.top)
         self.top.grab_set()
@@ -46,6 +44,8 @@ class SynonymManager:
         Entry(self.entry_frame, textvariable=self.new_syn).grid(row=0, column=0)
         Button(self.entry_frame, text="Add", command=self.add_syn).grid(row=0, column=1)
 
+        self.update_synonyms()
+
     def select(self, *args):
         self.new_syn.set(self.suggested_list[self.sugg_lb.curselection()[0]])
 
@@ -70,24 +70,26 @@ class SynonymManager:
                 synonyms = wordnet.synsets(curr_syn)
                 lemmas = set(chain.from_iterable([word.lemma_names() for word in synonyms]))
                 for w in lemmas:
-                    if w == curr_syn or w in self.syn_list:
+                    wl = w.lower()
+                    if wl == curr_syn or wl in self.syn_list:
                         continue
-                    if w not in synonyms_dict.keys():
-                        synonyms_dict[w] = 0
+                    if wl not in synonyms_dict.keys():
+                        synonyms_dict[wl] = 0
                     else:
-                        synonyms_dict[w] += 1
+                        synonyms_dict[wl] += 1
 
         else:
             all_words = self.word_manager.main_gui.database.GetAllWords()
 
             for word in all_words:
                 for w in word.lang_synonyms:
-                    if w == word.name or w in self.syn_list:
+                    wl = w
+                    if wl == word.name or wl in self.syn_list or wl == self.word_manager.word.name:
                         continue
-                    if w not in synonyms_dict.keys():
-                        synonyms_dict[w] = 0
+                    if wl not in synonyms_dict.keys():
+                        synonyms_dict[wl] = 0
                     else:
-                        synonyms_dict[w] += 1
+                        synonyms_dict[wl] += 1
 
         self.suggested_list = sorted(synonyms_dict.keys(), key=synonyms_dict.get)
         self.suggested_list.reverse()

@@ -49,8 +49,6 @@ class Database:
         self.con.commit()
 
     def GetWord(self, word_name: str) -> Word:
-        print(word_name)
-        print(type(word_name))
         self.cur.execute('SELECT * FROM Words WHERE WordName=:word', {"word": word_name})
         out = self.cur.fetchall()
 
