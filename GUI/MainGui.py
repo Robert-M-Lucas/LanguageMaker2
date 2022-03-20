@@ -33,11 +33,15 @@ class MainGui:
         self.trans_text = Text(self.right, width=40, height=15)
         self.trans_text.pack()
 
-        Button(self.left, text=f"English to {lang}").pack(fill=X)
-        Button(self.right, text=f"{lang} to English", command=self.translate).pack(fill=X)
+        Button(self.left, text=f"English to {lang}", command=self.translate_lang).pack(fill=X)
+        Button(self.right, text=f"{lang} to English", command=self.translate_eng).pack(fill=X)
 
         self.master.mainloop()
 
-    def translate(self):
+    def translate_eng(self):
         self.trans_text.delete('1.0', END)
-        self.trans_text.insert('1.0', Translate(self.text_in.get("1.0", END), self.database))
+        self.trans_text.insert('1.0', Translate(self.text_in.get("1.0", END), self.database, True))
+
+    def translate_lang(self):
+        self.trans_text.delete('1.0', END)
+        self.trans_text.insert('1.0', Translate(self.text_in.get("1.0", END), self.database, False))
