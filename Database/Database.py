@@ -38,7 +38,7 @@ class Database:
         self.con.commit()
 
     def UpdateWord(self, word: Word):
-        if word.new_name != word.name:
+        if word.new_name is not None:
             self.DeleteWord(word.name)
             self.AddWord(word.new_name, word.phonetic_eng, word.description, word.lang_synonyms, word.eng_synonyms)
         else:

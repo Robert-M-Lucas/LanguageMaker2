@@ -26,7 +26,7 @@ class WordSelector:
         Button(self.top, text="Create new", command=self.get_new).pack(fill=X)
 
     def get_new(self):
-        InputPopup(self.top, self.create_word, "Enter new word name:")
+        InputPopup(self.top, self.create_word, "Enter new word name:", True)
 
     def create_word(self, word_name: str):
         self.main_gui.database.AddWord(word_name.replace(" ", "_"))

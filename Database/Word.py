@@ -8,7 +8,7 @@ class WordAttributes:
 class Word:
     def __init__(self, db_data):
         self.name = db_data[0]
-        self.new_name = ""
+        self.new_name = None
         self.phonetic_eng = db_data[1]
         self.description = db_data[2]
         self.lang_synonyms = db_data[3].split(";")

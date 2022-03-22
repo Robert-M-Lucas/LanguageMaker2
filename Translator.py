@@ -1,4 +1,5 @@
 from Database.Database import Database
+from Database.Word import Word
 from Database.DatabaseExceptions import WordNotFoundError
 from dataclasses import dataclass
 from typing import List
@@ -66,6 +67,7 @@ class TranslationStep:
     word_not_found: bool
     current_word: int
     total_words: int
+    mode: bool
 
 
 class Translator:
@@ -77,13 +79,27 @@ class Translator:
             except ValueError:
                 break
         self.db = db
-        self.db_all_words = self.db.GetAllWords()
+
+        self.db_all_words = None
+        self.translations = None
+        self.re_index()
+
         self.mode = mode
         self.index = 0
 
+    def re_index(self):
+        self.db_all_words = self.db.GetAllWords()
+
+        self.translations = {}
+        for word in self.db_all_words:
+            for s in word.eng_synonyms:
+                if s in self.translations.keys():
+                    self.translations[s].append(word.name)
+                else:
+                    self.translations[s] = [word.name]
+
     def return_builder(self, options: List[str], w: str, word_not_found: bool = False) -> TranslationStep:
-        self.index += 1
-        return TranslationStep(options, w, word_not_found, self.index, len(self.split_text))
+        return TranslationStep(options, w, word_not_found, self.index, len(self.split_text), self.mode)
 
     def step(self) -> TranslationStep | None:
         if self.index >= len(self.split_text):
@@ -111,16 +127,9 @@ class Translator:
             #     return self.return_builder(word.eng_synonyms, w)
 
         else:
-            translations = {}
-            for w in self.db_all_words:
-                for s in w.eng_synonyms:
-                    if s in translations.keys():
-                        translations[s].append(w.name)
-                    else:
-                        translations[s] = [w.name]
-
-            if w not in translations.keys():
+            if w not in self.translations.keys():
                 return self.return_builder([], w, True)
-            trans = translations[w]
+
+            trans = self.translations[w]
 
             return self.return_builder(trans, w)

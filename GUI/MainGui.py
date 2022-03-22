@@ -4,9 +4,11 @@ from .WordSelector import WordSelector
 from .SynonymManager import SynonymManager
 from .WordManager import WordManager
 from Translator import TranslateAll, Translator, TranslationStep
+from .InputPopup import InputPopup
+from .MainGuiTranslation import MainGuiTranslation
 
 
-class MainGui:
+class MainGui(MainGuiTranslation):
     def __init__(self, lang):
         self.database = Database(lang)
 
@@ -37,9 +39,12 @@ class MainGui:
 
         self.right_bottom = Frame(self.right)
         self.right_bottom.pack(fill=X)
-        Button(self.right_bottom, text=f"{lang} to English", command=lambda: self.translate(True), width=30).grid(row=0, column=0, sticky=N+E+S+W)
+        Button(self.right_bottom, text=f"{lang} to English", command=lambda: self.translate(True), width=30).grid(row=0,
+                                                                                                                  column=0,
+                                                                                                                  sticky=N + E + S + W)
         self.deterministic = IntVar()
-        Checkbutton(self.right_bottom, text="Deterministic", variable=self.deterministic, width=10).grid(row=0, column=1)
+        Checkbutton(self.right_bottom, text="Deterministic", variable=self.deterministic, width=10).grid(row=0,
+                                                                                                         column=1)
 
         self.translator = None
         self.trans_top = None
@@ -47,44 +52,4 @@ class MainGui:
 
         self.master.mainloop()
 
-    def translate(self, mode: bool):
-        if self.deterministic.get() == 0:
-            self.trans_text.delete('1.0', END)
-            self.trans_text.insert('1.0', TranslateAll(self.text_in.get("1.0", END), self.database, mode))
-        else:
-            self.start_stepped_translate(mode)
 
-    def start_stepped_translate(self, mode: bool):
-        self.translator = Translator(self.text_in.get("1.0", END), self.database, mode)
-        self.stepped_translate()
-
-    def stepped_translate(self):
-        step = self.translator.step()
-
-        if step is None:
-            if self.trans_top is not None:
-                self.trans_top.destroy()
-            else:
-                self.trans_top = None
-            return
-
-        if self.trans_top is None:
-            self.trans_top = Toplevel(self.master)
-            self.trans_top.grab_set()
-
-        self.trans_top.title(f"{step.source_word} synonym options")
-
-        if self.trans_top_root is not None:
-            self.trans_top_root.destroy()
-
-        self.trans_top_root = Frame(self.trans_top)
-        self.trans_top_root.pack()
-
-        Label(self.trans_top_root, text=f"Translation for {step.source_word}").pack(fill=X)
-        lb_var = StringVar(value=step.translation_options)
-        lb = Listbox(self.trans_top_root, listvariable=lb_var)
-        lb.select_set(0)
-        lb.pack(fill=X)
-
-        Button(self.trans_top_root, text="Add synonym").pack(fill=X)
-        Button(self.trans_top_root, text="Select", command=self.stepped_translate).pack(fill=X)

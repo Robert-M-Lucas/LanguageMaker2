@@ -5,3 +5,5 @@ programming
 ### Translation Errors
 - [NT for {word name}] - No translation for this word; add a translation by editing the word's 
 English synonyms
+
+Using 'deterministic' translation allows you to resolve errors as they come up
