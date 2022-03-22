@@ -6,8 +6,8 @@ from typing import List
 
 class MainGuiTranslation:
     def translate(self, mode: bool):
+        self.trans_text.delete('1.0', END)
         if self.deterministic.get() == 0:
-            self.trans_text.delete('1.0', END)
             self.trans_text.insert('1.0', TranslateAll(self.text_in.get("1.0", END), self.database, mode))
         else:
             self.start_stepped_translate(mode)
@@ -22,9 +22,17 @@ class MainGuiTranslation:
 
         if step is None:
             if self.trans_top is not None:
-                self.trans_top.destroy()
-                self.trans_top = None
+                self.end_stepped_translate()
             return
+
+        if len(step.translation_options) == 1:
+            self.trans_text.insert(END, step.translation_options[0] + " ")
+            self.stepped_translate()
+            return
+
+        self.text_in.tag_delete("high")
+        self.text_in.tag_add("high", f"1.0+ {step.highlight_region[0]} chars", f"1.0+ {step.highlight_region[1]} chars")
+        self.text_in.tag_config("high", background="yellow")
 
         if self.trans_top is None:
             self.trans_top = Toplevel(self.master)
@@ -69,6 +77,7 @@ class MainGuiTranslation:
 
     def end_stepped_translate(self):
         self.trans_top.destroy()
+        self.text_in.tag_delete("high")
         self.trans_top = None
 
     def add_syn_trans(self, syn, step):

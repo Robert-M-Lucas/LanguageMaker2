@@ -43,7 +43,7 @@ class MainGui(MainGuiTranslation):
                                                                                                                   column=0,
                                                                                                                   sticky=N + E + S + W)
         self.deterministic = IntVar()
-        Checkbutton(self.right_bottom, text="Deterministic", variable=self.deterministic, width=10).grid(row=0,
+        Checkbutton(self.right_bottom, text="Stepped", variable=self.deterministic, width=10).grid(row=0,
                                                                                                          column=1)
 
         self.translator = None

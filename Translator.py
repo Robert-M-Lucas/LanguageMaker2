@@ -68,14 +68,24 @@ class TranslationStep:
     current_word: int
     total_words: int
     mode: bool
+    highlight_region: (int, int)
 
 
 class Translator:
     def __init__(self, text_in: str, db: Database, mode: bool):
         self.split_text = text_in.replace("\n", " ").split(" ")
+        self.highlight_regions = []
+
+        i = 0
+        for sect in self.split_text:
+            self.highlight_regions.append((i, i+len(sect)))
+            i += len(sect) + 1
+
         while True:
             try:
-                self.split_text.remove("")
+                pos = self.split_text.index("")
+                self.split_text.pop(pos)
+                self.highlight_regions.pop(pos)
             except ValueError:
                 break
         self.db = db
@@ -98,14 +108,15 @@ class Translator:
                 else:
                     self.translations[s] = [word.name]
 
-    def return_builder(self, options: List[str], w: str, word_not_found: bool = False) -> TranslationStep:
-        return TranslationStep(options, w, word_not_found, self.index, len(self.split_text), self.mode)
+    def return_builder(self, options: List[str], w: str, highlight_region: (int, int), word_not_found: bool = False) -> TranslationStep:
+        return TranslationStep(options, w, word_not_found, self.index, len(self.split_text), self.mode, highlight_region)
 
     def step(self) -> TranslationStep | None:
         if self.index >= len(self.split_text):
             return None
 
         w = self.split_text[self.index]
+        highlight = self.highlight_regions[self.index]
         if self.mode:
             retrieved_words = {}
 
@@ -116,9 +127,9 @@ class Translator:
                     word = self.db.GetWord(w)
                     retrieved_words[w] = word
                 except WordNotFoundError:
-                    return self.return_builder([], w, True)
+                    return self.return_builder([], w, highlight, True)
 
-            return self.return_builder(word.eng_synonyms, w)
+            return self.return_builder(word.eng_synonyms, w, highlight)
             # if len(word.eng_synonyms) == 0:
             #     return self.return_builder([], w)
             # elif len(word.eng_synonyms) == 1:
@@ -128,8 +139,8 @@ class Translator:
 
         else:
             if w not in self.translations.keys():
-                return self.return_builder([], w, True)
+                return self.return_builder([], w, highlight, True)
 
             trans = self.translations[w]
 
-            return self.return_builder(trans, w)
+            return self.return_builder(trans, w, highlight)
