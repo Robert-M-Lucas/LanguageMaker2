@@ -1,4 +1,4 @@
-# Setup Gui Help
+# Language Selector Help
 
 NLTK is required for finding synonyms to words and this program relies on it to
 give predictions for synonyms you may want to add.

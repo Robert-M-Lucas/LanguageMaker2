@@ -9,6 +9,7 @@ English synonyms
 Using 'stepped' translation allows you to resolve errors as they come up
 
 ### Dependencies
+```pip install *library name*```
 - requests
 - tkhtmlview
 - nltk

@@ -2,6 +2,7 @@ from tkinter import *
 from Database.Database import Database
 from .WordSelector import WordSelector
 from .MainGuiTranslation import MainGuiTranslation
+from .HelpWindow import HelpWindow
 
 # from .SynonymManager import SynonymManager
 # from .WordManager import WordManager
@@ -17,6 +18,8 @@ class MainGui(MainGuiTranslation):
         self.master.title("Language Maker 2 - " + lang)
         self.root = Frame(self.master)
         self.root.pack()
+
+        HelpWindow(self.master, "MainGui")
 
         Button(self.root, text="Word Manager", command=lambda: WordSelector(self, lang)).pack(fill=X)
 

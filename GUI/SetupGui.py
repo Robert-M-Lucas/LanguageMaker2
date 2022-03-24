@@ -46,7 +46,15 @@ class SetupGui:
         self.master.mainloop()
 
     def create_lang(self):
-        InputPopup(self.master, self.start_main_gui, "Enter new language name")
+        InputPopup(self.master, self.new_lang_check, "Enter new language name")
+
+    def new_lang_check(self, lang):
+        db_files = [f.split(".")[0] for f in os.listdir("Data") if os.path.isfile(os.path.join("Data", f))]
+        for db in db_files:
+            if db.upper() == lang.upper():
+                self.error_label.config(text="Language already exists")
+                return
+        self.start_main_gui(lang)
 
     def get_lang_from_select(self):
         self.start_main_gui(self.lang_selected.get())
@@ -55,11 +63,6 @@ class SetupGui:
         for l in lang:
             if l.upper() not in utils.ALLOWED_LANG_CHARS:
                 self.error_label.config(text="Banned character in language name")
-                return
-        db_files = [f.split(".")[0] for f in os.listdir("Data") if os.path.isfile(os.path.join("Data", f))]
-        for db in db_files:
-            if db.upper() == lang.upper():
-                self.error_label.config(text="Language already exists")
                 return
         self.master.destroy()
         MainGui(lang)
