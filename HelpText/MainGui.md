@@ -11,7 +11,7 @@ custom language
 
 Toggle this option with 'Stepped button'
 
-###Stepped
+### Stepped
 
 The translation will pause if:
 
@@ -20,7 +20,7 @@ The translation will pause if:
 
 And will ask you how to continue
 
-###Not Stepped
+### Not Stepped
 
 The translation will complete without stopping. 
 

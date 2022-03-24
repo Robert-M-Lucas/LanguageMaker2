@@ -1,6 +1,7 @@
 from tkinter import *
 from .InputPopup import InputPopup
 from .WordManager import WordManager
+from .HelpWindow import HelpWindow
 
 
 class WordSelector:
@@ -11,6 +12,8 @@ class WordSelector:
         self.top = Toplevel(main_gui.master)
         self.top.grab_set()
         self.top.title("Word Selector")
+
+        HelpWindow(self.top, "WordSelector")
 
         self.entry_frame = Frame(self.top)
         self.entry_frame.pack(fill=X)
@@ -23,7 +26,7 @@ class WordSelector:
 
         Button(self.top, text="Edit selected word", command=self.edit_word).pack(fill=X)
         Button(self.top, text="Delete selected word", command=self.delete_word).pack(fill=X)
-        Button(self.top, text="Create new", command=self.get_new).pack(fill=X)
+        Button(self.top, text="Create new word", command=self.get_new).pack(fill=X)
 
     def get_new(self):
         InputPopup(self.top, self.create_word, "Enter new word name:", True)
