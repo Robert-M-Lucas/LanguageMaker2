@@ -1,5 +1,7 @@
+from tkinter import messagebox
 from tkinter import *
-from Translator import TranslateAll, Translator
+from Translator import TranslateAll, Translator, TranslationStep
+from Database import DatabaseExceptions
 from .InputPopup import InputPopup
 from typing import List
 
@@ -37,7 +39,8 @@ class MainGuiTranslation:
         if self.trans_top is None:
             self.trans_top = Toplevel(self.master)
             self.trans_top.protocol("WM_DELETE_WINDOW", self.end_stepped_translate)
-            self.trans_top.grab_set()
+
+        self.trans_top.grab_set()
 
         self.trans_top.title(f"{step.source_word} synonym options")
 
@@ -59,16 +62,20 @@ class MainGuiTranslation:
             Button(self.trans_top_root, text="Add synonym", command=lambda:
             InputPopup(self.trans_top_root, self.add_syn_trans, f"Enter synonym for {step.source_word}", True, [step])
                    ).pack(fill=X)
-            Button(self.trans_top_root, text="Select", command=lambda: self.insert_word_stepped(lb, lb_list)).pack(fill=X)
+            Button(self.trans_top_root, text="Select", command=lambda: self.insert_word_stepped(lb, lb_list)).pack(
+                fill=X)
 
         elif step.mode:
             Label(self.trans_top_root, text=f"No synonyms for {step.source_word}").pack(fill=X)
             Button(self.trans_top_root, text="Add synonym", command=lambda:
             InputPopup(self.trans_top_root, self.add_syn_trans, f"Enter synonym for {step.source_word}", True, [step])
                    ).pack(fill=X)
+
         else:
             Label(self.trans_top_root, text=f"No translation for {step.source_word}").pack(fill=X)
-            Button(self.trans_top_root, text=f"Create new word (WIP)").pack(fill=X)
+            Button(self.trans_top_root, text="Add synonym", command=lambda:
+            InputPopup(self.trans_top_root, self.add_syn_trans, f"Enter synonym for {step.source_word}", True, [step])
+                   ).pack(fill=X)
 
     def insert_word_stepped(self, lb: Listbox, lb_list: List[str]):
         self.trans_text.insert(END, lb_list[lb.curselection()[0]] + " ")
@@ -80,13 +87,33 @@ class MainGuiTranslation:
         self.text_in.tag_delete("high")
         self.trans_top = None
 
-    def add_syn_trans(self, syn, step):
-        word = self.database.GetWord(step.source_word)
-        word.eng_synonyms += ";" + syn
+    def add_syn_trans(self, syn, step: TranslationStep):
+        if step.mode:
+            word = self.database.GetWord(step.source_word)
+            word.eng_synonyms += ";" + syn
 
-        self.database.UpdateWord(word)
+            self.database.UpdateWord(word)
 
-        self.translator.index -= 1
-        self.translator.re_index()
+            self.translator.index -= 1
+            self.translator.re_index()
 
-        self.stepped_translate()
+            self.stepped_translate()
+        else:
+            try:
+                word = self.database.GetWord(syn)
+            except DatabaseExceptions.WordNotFoundError:
+                messagebox.showerror(f"Word '{syn}' not found", f"Word '{syn}' wasn't found, use the Word Manager to "
+                                                                f"create new words")
+                self.translator.index -= 1
+                self.translator.re_index()
+                self.stepped_translate()
+                return
+
+            word.eng_synonyms.append(step.source_word)
+
+            self.database.UpdateWord(word)
+
+            self.translator.index -= 1
+            self.translator.re_index()
+
+            self.stepped_translate()

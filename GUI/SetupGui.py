@@ -5,6 +5,8 @@ from tkinter import ttk
 from .InputPopup import InputPopup
 from .MainGui import MainGui
 import utils
+from .HelpWindow import HelpWindow
+import os
 
 
 class SetupGui:
@@ -13,6 +15,8 @@ class SetupGui:
         self.master.title("Pick a language")
         self.root = Frame(self.master)
         self.root.pack()
+
+        HelpWindow(self.master, "SetupGui")
 
         if has_nltk:
             Label(self.root, text="NLTK Downloaded").pack(fill=X)
@@ -29,7 +33,6 @@ class SetupGui:
         if len(self.langs) > 0:
             self.lang_selected.set(self.langs[0])
 
-            # Create Dropdown menu
             drop = OptionMenu(self.root, self.lang_selected, *self.langs)
             drop.pack(fill=X)
 
@@ -37,7 +40,7 @@ class SetupGui:
 
         Button(self.root, text="Create new language", command=self.create_lang).pack(fill=X)
 
-        self.error_label = Label(self.root, text="")
+        self.error_label = Label(self.root, text="You can press F1 for help\non most windows")
         self.error_label.pack()
 
         self.master.mainloop()
@@ -52,6 +55,11 @@ class SetupGui:
         for l in lang:
             if l.upper() not in utils.ALLOWED_LANG_CHARS:
                 self.error_label.config(text="Banned character in language name")
+                return
+        db_files = [f.split(".")[0] for f in os.listdir("Data") if os.path.isfile(os.path.join("Data", f))]
+        for db in db_files:
+            if db.upper() == lang.upper():
+                self.error_label.config(text="Language already exists")
                 return
         self.master.destroy()
         MainGui(lang)

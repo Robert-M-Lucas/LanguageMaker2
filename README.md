@@ -7,3 +7,9 @@ programming
 English synonyms
 
 Using 'stepped' translation allows you to resolve errors as they come up
+
+### Dependencies
+- requests
+- tkhtmlview
+- nltk
+- markdown

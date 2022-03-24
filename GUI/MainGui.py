@@ -1,11 +1,12 @@
 from tkinter import *
 from Database.Database import Database
 from .WordSelector import WordSelector
-from .SynonymManager import SynonymManager
-from .WordManager import WordManager
-from Translator import TranslateAll, Translator, TranslationStep
-from .InputPopup import InputPopup
 from .MainGuiTranslation import MainGuiTranslation
+
+# from .SynonymManager import SynonymManager
+# from .WordManager import WordManager
+# from Translator import TranslateAll, Translator, TranslationStep
+# from .InputPopup import InputPopup
 
 
 class MainGui(MainGuiTranslation):
@@ -39,12 +40,10 @@ class MainGui(MainGuiTranslation):
 
         self.right_bottom = Frame(self.right)
         self.right_bottom.pack(fill=X)
-        Button(self.right_bottom, text=f"{lang} to English", command=lambda: self.translate(True), width=30).grid(row=0,
-                                                                                                                  column=0,
-                                                                                                                  sticky=N + E + S + W)
+        Button(self.right_bottom, text=f"{lang} to English", command=lambda: self.translate(True), width=30)\
+            .grid(row=0, column=0, sticky=N + E + S + W)
         self.deterministic = IntVar()
-        Checkbutton(self.right_bottom, text="Stepped", variable=self.deterministic, width=10).grid(row=0,
-                                                                                                         column=1)
+        Checkbutton(self.right_bottom, text="Stepped", variable=self.deterministic, width=10).grid(row=0, column=1)
 
         self.translator = None
         self.trans_top = None

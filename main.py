@@ -1,5 +1,6 @@
 from itertools import chain
 from GUI.SetupGui import SetupGui
+import setup
 
 # NLTK Imports
 has_nltk = True
