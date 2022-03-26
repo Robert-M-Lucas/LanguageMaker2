@@ -1,5 +1,6 @@
-import nltk
+from nltk.downloader import download
+
 
 def download():
-    nltk.download('wordnet')
-    nltk.download('omw-1.4')
+    download('wordnet')
+    download('omw-1.4')
