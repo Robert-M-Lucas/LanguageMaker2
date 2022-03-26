@@ -7,6 +7,8 @@ Input text to be translated in the left. Then click 'English to ***language name
 are translating from English or '***language name*** to English' if you ae translating from your
 custom language
 
+Note: Translating to phonetic English cannot be stepped
+
 ## Stepping
 
 Toggle this option with 'Stepped button'

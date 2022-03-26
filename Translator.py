@@ -5,12 +5,14 @@ from dataclasses import dataclass
 from typing import List
 import re
 
+# TODO: Improve synonym lookup efficiency by using DB lookup, not GetAllWords()
+
 PUNCTUATION = ".,?\"'[]{};:<>/\\-=+|`~@#$%^&*()\n "
 
 
-def TranslateAll(text_in: str, db: Database, mode: bool) -> str:
+def text_in_to_split_text(text_in: str) -> (List[str], bool):
     if len(text_in) == 0:
-        return ""
+        return []
 
     split_text = [""]
     i = 0
@@ -23,6 +25,50 @@ def TranslateAll(text_in: str, db: Database, mode: bool) -> str:
             punctuation = not punctuation
             split_text.append(c)
             i += 1
+
+    return split_text, start_punctuation
+
+
+def TranslatePhonetic(text_in: str, db: Database) -> str:
+    if len(text_in) == 0:
+        return ""
+
+    split_text, start_punctuation = text_in_to_split_text(text_in)
+
+    out_str = ""
+
+    retrieved_words = {}
+    punctuation = start_punctuation
+    for w in split_text:
+        if punctuation:
+            out_str += w
+        else:
+            if w in retrieved_words.keys():
+                word = retrieved_words[w]
+            else:
+                try:
+                    word = db.GetWord(w)
+                    retrieved_words[w] = word
+                except WordNotFoundError:
+                    out_str += f"[{w} doesn't exist] "
+                    punctuation = not punctuation
+                    continue
+
+            if word.phonetic_eng != "":
+                out_str += word.phonetic_eng
+            else:
+                out_str += word.name
+
+        punctuation = not punctuation
+
+    return out_str
+
+
+def TranslateAll(text_in: str, db: Database, mode: bool) -> str:
+    if len(text_in) == 0:
+        return ""
+
+    split_text, start_punctuation = text_in_to_split_text(text_in)
 
     out_str = ""
 
@@ -98,18 +144,7 @@ class Translator:
         if len(text_in) == 0:
             text_in = "\n"
 
-        self.split_text = [""]
-
-        self.start_punctuation = text_in[0] in PUNCTUATION
-        punctuation = self.start_punctuation
-        i = 0
-        for c in text_in:
-            if (c in PUNCTUATION and punctuation) or (c not in PUNCTUATION and not punctuation):
-                self.split_text[i] += c
-            else:
-                punctuation = not punctuation
-                self.split_text.append(c)
-                i += 1
+        self.split_text, self.start_punctuation = text_in_to_split_text(text_in)
 
         self.highlight_regions = []
 

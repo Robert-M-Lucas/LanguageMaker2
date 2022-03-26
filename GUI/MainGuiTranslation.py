@@ -1,12 +1,16 @@
 from tkinter import messagebox
 from tkinter import *
-from Translator import TranslateAll, Translator, TranslationStep
+from Translator import TranslateAll, Translator, TranslationStep, TranslatePhonetic
 from Database import DatabaseExceptions
 from .InputPopup import InputPopup
 from typing import List
 
 
 class MainGuiTranslation:
+    def translate_phonetic(self):
+        self.trans_text.delete('1.0', END)
+        self.trans_text.insert('1.0', TranslatePhonetic(self.text_in.get("1.0", END), self.database))
+
     def translate(self, mode: bool):
         self.trans_text.delete('1.0', END)
         if self.deterministic.get() == 0:

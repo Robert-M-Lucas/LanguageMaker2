@@ -39,11 +39,21 @@ class MainGui(MainGuiTranslation):
         self.trans_text = Text(self.right, width=40, height=15)
         self.trans_text.pack()
 
-        Button(self.left, text=f"English to {lang}", command=lambda: self.translate(False)).pack(fill=X)
+        self.left_bottom = Frame(self.left)
+        self.left_bottom.pack(fill=X, expand=1)
+        self.left_bottom.rowconfigure(0, weight=1)
+        self.left_bottom.columnconfigure(0, weight=1)
+        self.left_bottom.columnconfigure(1, weight=1)
+
+        Button(self.left_bottom, text=f"{lang} to English", command=lambda: self.translate(True))\
+            .grid(row=0, column=0, sticky=N+E+S+W)
+        Button(self.left_bottom, text=f"{lang} to English Phonetic", command=self.translate_phonetic) \
+            .grid(row=0, column=1, sticky=N+E+S+W)
 
         self.right_bottom = Frame(self.right)
         self.right_bottom.pack(fill=X)
-        Button(self.right_bottom, text=f"{lang} to English", command=lambda: self.translate(True), width=30)\
+
+        Button(self.right_bottom, text=f"English to {lang}", command=lambda: self.translate(False), width=30) \
             .grid(row=0, column=0, sticky=N + E + S + W)
         self.deterministic = IntVar()
         Checkbutton(self.right_bottom, text="Stepped", variable=self.deterministic, width=10).grid(row=0, column=1)
