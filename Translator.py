@@ -5,39 +5,53 @@ from dataclasses import dataclass
 from typing import List
 import re
 
-# TODO: Add support for punctuation in translation
+PUNCTUATION = ".,?\"'[]{};:<>/\\-=+|`~@#$%^&*()\n "
 
 
 def TranslateAll(text_in: str, db: Database, mode: bool) -> str:
-    split_text = text_in.replace("\n", " ").split(" ")
-    while True:
-        try:
-            split_text.remove("")
-        except ValueError:
-            break
+    if len(text_in) == 0:
+        return ""
+
+    split_text = [""]
+    i = 0
+    start_punctuation = text_in[0] in PUNCTUATION
+    punctuation = start_punctuation
+    for c in text_in:
+        if (c in PUNCTUATION and punctuation) or (c not in PUNCTUATION and not punctuation):
+            split_text[i] += c
+        else:
+            punctuation = not punctuation
+            split_text.append(c)
+            i += 1
+
     out_str = ""
 
     if mode:
         retrieved_words = {}
 
+        punctuation = start_punctuation
         for w in split_text:
-            if w in retrieved_words.keys():
-                word = retrieved_words[w]
+            print(punctuation)
+            if punctuation:
+                out_str += w
             else:
-                try:
-                    word = db.GetWord(w)
-                    retrieved_words[w] = word
-                except WordNotFoundError:
-                    out_str += f"[{w} doesn't exist] "
-                    continue
+                if w in retrieved_words.keys():
+                    word = retrieved_words[w]
+                else:
+                    try:
+                        word = db.GetWord(w)
+                        retrieved_words[w] = word
+                    except WordNotFoundError:
+                        out_str += f"[{w} doesn't exist] "
+                        continue
 
-            if len(word.eng_synonyms) == 0:
-                out_str += f"[NT for {w}]"
-            elif len(word.eng_synonyms) == 1:
-                out_str += word.eng_synonyms[0]
-            else:
-                out_str += "[" + "/".join([x for x in word.eng_synonyms]) + "]"
-            out_str += " "
+                if len(word.eng_synonyms) == 0:
+                    out_str += f"[NT for {w}]"
+                elif len(word.eng_synonyms) == 1:
+                    out_str += word.eng_synonyms[0]
+                else:
+                    out_str += "[" + "/".join([x for x in word.eng_synonyms]) + "]"
+            punctuation = not punctuation
 
     else:
         translations = {}
@@ -48,16 +62,20 @@ def TranslateAll(text_in: str, db: Database, mode: bool) -> str:
                 else:
                     translations[s] = [w.name]
 
+        punctuation = start_punctuation
         for w in split_text:
-            if w not in translations.keys():
-                out_str += f"[NT for {w}] "
-                continue
-            trans = translations[w]
-            if len(trans) == 1:
-                out_str += trans[0]
+            if punctuation:
+                out_str += w
             else:
-                out_str += "[" + "/".join([x for x in trans]) + "]"
-            out_str += " "
+                if w not in translations.keys():
+                    out_str += f"[NT for {w}]"
+                else:
+                    trans = translations[w]
+                    if len(trans) == 1:
+                        out_str += trans[0]
+                    else:
+                        out_str += "[" + "/".join([x for x in trans]) + "]"
+            punctuation = not punctuation
 
     return out_str
 
@@ -71,17 +89,43 @@ class TranslationStep:
     total_words: int
     mode: bool
     highlight_region: (int, int)
+    starting_punct: str = ""
+    trailing_punct: str = ""
 
 
 class Translator:
     def __init__(self, text_in: str, db: Database, mode: bool):
-        self.split_text = text_in.replace("\n", " ").split(" ")
+        if len(text_in) == 0:
+            text_in = "\n"
+
+        self.split_text = [""]
+
+        self.start_punctuation = text_in[0] in PUNCTUATION
+        punctuation = self.start_punctuation
+        i = 0
+        for c in text_in:
+            if (c in PUNCTUATION and punctuation) or (c not in PUNCTUATION and not punctuation):
+                self.split_text[i] += c
+            else:
+                punctuation = not punctuation
+                self.split_text.append(c)
+                i += 1
+
         self.highlight_regions = []
 
         i = 0
-        for sect in self.split_text:
+        for j, sect in enumerate(self.split_text):
+            print(sect)
+            if (j%2 == 0 and self.start_punctuation) or (not j%2 == 0 and not self.start_punctuation):
+                i += len(sect) - 1
+                continue
             self.highlight_regions.append((i, i+len(sect)))
             i += len(sect) + 1
+            print("highlighted")
+
+        print(self.highlight_regions)
+        print(self.split_text)
+        print(self.start_punctuation)
 
         while True:
             try:
@@ -97,6 +141,11 @@ class Translator:
         self.re_index()
 
         self.mode = mode
+
+        if self.start_punctuation:
+            self.index_offset = 1
+        else:
+            self.index_offset = 0
         self.index = 0
 
     def re_index(self):
@@ -111,13 +160,23 @@ class Translator:
                     self.translations[s] = [word.name]
 
     def return_builder(self, options: List[str], w: str, highlight_region: (int, int), word_not_found: bool = False) -> TranslationStep:
-        return TranslationStep(options, w, word_not_found, self.index, len(self.split_text), self.mode, highlight_region)
+
+        starting_punct = ""
+        trailing_punct = ""
+
+        if self.start_punctuation:
+            starting_punct = self.split_text[self.index*2]
+        else:
+            trailing_punct = self.split_text[self.index*2+1]
+
+        return TranslationStep(options, w, word_not_found, self.index, len(self.split_text), self.mode,
+                               highlight_region, starting_punct, trailing_punct)
 
     def step(self) -> TranslationStep | None:
-        if self.index >= len(self.split_text):
+        if (self.index*2) + self.index_offset >= len(self.split_text):
             return None
 
-        w = self.split_text[self.index]
+        w = self.split_text[(self.index*2) + self.index_offset]
         highlight = self.highlight_regions[self.index]
         if self.mode:
             retrieved_words = {}
