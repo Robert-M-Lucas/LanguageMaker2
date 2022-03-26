@@ -3,7 +3,9 @@ This is an updated version of a previous language maker to track my improvement 
 programming
 
 The initial startup may take longer as it converts the Markdown text files to HTML if they
-haven't been converted in advance
+haven't been cached in advance
+
+Press F1 on most screens for help
 
 ### Translation Errors
 - [NT for {word name}] - No translation for this word; add a translation by editing the word's 
