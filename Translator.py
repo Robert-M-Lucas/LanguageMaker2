@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from typing import List
 import re
 
+# TODO: Add support for punctuation in translation
+
 
 def TranslateAll(text_in: str, db: Database, mode: bool) -> str:
     split_text = text_in.replace("\n", " ").split(" ")

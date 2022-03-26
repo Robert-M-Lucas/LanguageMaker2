@@ -1,5 +1,6 @@
 from tkinter import *
 from .SynonymManager import SynonymManager
+from .HelpWindow import HelpWindow
 
 
 class WordManager:
@@ -14,7 +15,9 @@ class WordManager:
         self.top = Toplevel(master)
         self.top.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.top.grab_set()
-        self.top.title("Word Manager")
+        self.top.title(f"Word Manager for {word_name}")
+
+        HelpWindow(self.top, "WordManager")
 
         self.root = Frame(self.top)
         self.root.pack()
@@ -25,13 +28,13 @@ class WordManager:
         self.right.grid(row=0, column=1)
 
         # LEFT
-        Label(self.left, text=f"Word in {lang}").pack(fill=X)
+        Label(self.left, text=f"Word in '{lang}'").pack(fill=X)
         self.word_name_str = StringVar(self.top, value=self.word.name)
         Entry(self.left, textvariable=self.word_name_str).pack(fill=X)
         Label(self.left, text=f"Word in phonetic English").pack(fill=X)
         self.word_name_eng_str = StringVar(self.top, value=self.word.phonetic_eng)
         Entry(self.left, textvariable=self.word_name_eng_str).pack(fill=X)
-        Label(self.left, text=f"{lang} synonyms").pack(fill=X)
+        Label(self.left, text=f"'{lang}' synonyms").pack(fill=X)
         Button(self.left, text="Synonym manager", command=lambda: SynonymManager(self, lang)).pack(fill=X)
         Label(self.left, text=f"English synonyms").pack(fill=X)
         Button(self.left, text="Synonym manager", command=lambda: SynonymManager(self, "")).pack(fill=X)

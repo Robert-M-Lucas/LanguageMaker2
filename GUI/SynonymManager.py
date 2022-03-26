@@ -1,6 +1,7 @@
 from itertools import chain
 from tkinter import *
 from nltk.corpus import wordnet
+from .HelpWindow import HelpWindow
 
 
 class SynonymManager:
@@ -17,6 +18,8 @@ class SynonymManager:
         self.top = Toplevel(word_manager.top)
         self.top.grab_set()
         self.top.title(window_name)
+
+        HelpWindow(self.top, "SynonymManager")
 
         self.left = Frame(self.top)
         self.left.grid(row=0, column=0)
@@ -78,6 +81,7 @@ class SynonymManager:
                     else:
                         synonyms_dict[wl] += 1
 
+        # TODO: This code can be greatly optimised
         else:
             all_words = self.word_manager.main_gui.database.GetAllWords()
 

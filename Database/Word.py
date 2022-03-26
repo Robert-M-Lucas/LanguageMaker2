@@ -1,28 +1,14 @@
-class WordAttributes:
-    def __init__(self):
-        # WordName primary key
-        # Synonyms ;-separated
-        self.attr = ("PhoneticEng TEXT", "Description TEXT", "LangSynonyms TEXT", "EngSynonyms TEXT")
 
 
 class Word:
-    def __init__(self, db_data):
-        self.name = db_data[0]
+    def __init__(self, word_data, eng_syn_data, lang_syn_data):
+        self.name = word_data[0]
         self.new_name = None
-        self.phonetic_eng = db_data[1]
-        self.description = db_data[2]
-        self.lang_synonyms = db_data[3].split(";")
-        while True:
-            try:
-                self.lang_synonyms.remove('')
-            except ValueError:
-                break
-        self.eng_synonyms = db_data[4].split(";")
-        while True:
-            try:
-                self.eng_synonyms.remove('')
-            except ValueError:
-                break
+        self.phonetic_eng = word_data[1]
+        self.description = word_data[2]
+
+        self.lang_synonyms = [s[0] for s in lang_syn_data]
+        self.eng_synonyms = [s[0] for s in eng_syn_data]
 
     def __str__(self):
         _str = f"""Name: {self.name}
