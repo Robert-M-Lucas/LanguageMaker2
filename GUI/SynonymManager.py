@@ -1,7 +1,8 @@
+from .HelpWindow import HelpWindow
+
 from itertools import chain
 from tkinter import *
 from nltk.corpus import wordnet
-from .HelpWindow import HelpWindow
 
 
 class SynonymManager:

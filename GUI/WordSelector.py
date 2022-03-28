@@ -17,9 +17,10 @@ class WordSelector:
 
         self.entry_frame = Frame(self.top)
         self.entry_frame.pack(fill=X)
-        Entry(self.entry_frame).grid(row=0, column=0)
+        self.search_entry = Entry(self.entry_frame)
+        self.search_entry.grid(row=0, column=0)
         # TODO: Make this button functional
-        Button(self.entry_frame, text="🔎").grid(row=0, column=1)
+        Button(self.entry_frame, text="🔎", command=self.search).grid(row=0, column=1)
 
         self.lb_var = StringVar(value=self.current_word_name_list)
         self.lb = Listbox(self.top, listvariable=self.lb_var)
@@ -37,8 +38,17 @@ class WordSelector:
         self.main_gui.database.AddWord(word_name.replace(" ", "_"))
         self.update_words()
 
-    def update_words(self):
+    def update_words(self, query=None):
         self.current_word_name_list = self.main_gui.database.GetAllWordNames()
+
+        if query is not None and query != "":
+            x = 0
+            while x < len(self.current_word_name_list):
+                if query.upper() in self.current_word_name_list[x].upper():
+                    x += 1
+                else:
+                    self.current_word_name_list.pop(x)
+
         self.lb_var.set(value=self.current_word_name_list)
 
     def delete_word(self):
@@ -49,3 +59,5 @@ class WordSelector:
         WordManager(self.top, self.main_gui, self, self.lang, self.current_word_name_list[self.lb.curselection()[0]])
         self.top.withdraw()
 
+    def search(self):
+        self.update_words(query=self.search_entry.get())

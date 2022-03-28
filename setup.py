@@ -3,7 +3,7 @@ import os
 import shutil
 
 
-def compile():
+def compile_cache():
     print("Cache not created, creating now...")
 
     try:
@@ -14,8 +14,8 @@ def compile():
     os.mkdir("CACHE")
 
     with open("VERSION.txt", "r") as v:
-        with open("CACHE/CACHE_VERSION.txt", "w+") as cv:
-            cv.write(v.read())
+        with open("CACHE/CACHE_VERSION.txt", "w+") as _cv:
+            _cv.write(v.read())
 
     os.mkdir("CACHE/CompiledHelpText")
 
@@ -27,15 +27,16 @@ def compile():
                 html.write(markdown.markdown(rf.read()))
 
 
-if not os.path.exists("CACHE"):
-    compile()
-elif not os.path.exists("CACHE/CACHE_VERSION.txt"):
-    compile()
-else:
-    failed = False
-    with open("VERSION.txt", "r") as v:
-        with open("CACHE/CACHE_VERSION.txt", "r") as cv:
-            if v.read() != cv.read():
-                failed = True
-    if failed:
-        compile()
+def setup():
+    if not os.path.exists("CACHE"):
+        compile_cache()
+    elif not os.path.exists("CACHE/CACHE_VERSION.txt"):
+        compile_cache()
+    else:
+        failed = False
+        with open("VERSION.txt", "r") as v:
+            with open("CACHE/CACHE_VERSION.txt", "r") as cv:
+                if v.read() != cv.read():
+                    failed = True
+        if failed:
+            compile_cache()

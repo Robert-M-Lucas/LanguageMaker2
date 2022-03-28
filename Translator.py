@@ -1,13 +1,13 @@
 from Database.Database import Database
 from Database.Word import Word
 from Database.DatabaseExceptions import WordNotFoundError
+
 from dataclasses import dataclass
 from typing import List
-import re
 
 # TODO: Improve synonym lookup efficiency by using DB lookup, not GetAllWords()
 
-PUNCTUATION = ".,?\"'[]{};:<>/\\-=+|`~@#$%^&*()\n "
+PUNCTUATION = ".,?\"'[]{};:<>/\\-=+|`~@#$%^&*()\n! "
 
 
 def text_in_to_split_text(text_in: str) -> (List[str], bool):
@@ -156,11 +156,6 @@ class Translator:
                 continue
             self.highlight_regions.append((i, i+len(sect)))
             i += len(sect) + 1
-            print("highlighted")
-
-        print(self.highlight_regions)
-        print(self.split_text)
-        print(self.start_punctuation)
 
         while True:
             try:
@@ -171,9 +166,9 @@ class Translator:
                 break
         self.db = db
 
-        self.db_all_words = None
-        self.translations = None
-        self.re_index()
+        # self.db_all_words = None
+        # self.translations = None
+        # self.re_index()
 
         self.mode = mode
 
@@ -183,16 +178,16 @@ class Translator:
             self.index_offset = 0
         self.index = 0
 
-    def re_index(self):
-        self.db_all_words = self.db.GetAllWords()
-
-        self.translations = {}
-        for word in self.db_all_words:
-            for s in word.eng_synonyms:
-                if s in self.translations.keys():
-                    self.translations[s].append(word.name)
-                else:
-                    self.translations[s] = [word.name]
+    # def re_index(self):
+    #     self.db_all_words = self.db.GetAllWords()
+#
+    #     self.translations = {}
+    #     for word in self.db_all_words:
+    #         for s in word.eng_synonyms:
+    #             if s in self.translations.keys():
+    #                 self.translations[s].append(word.name)
+    #             else:
+    #                 self.translations[s] = [word.name]
 
     def return_builder(self, options: List[str], w: str, highlight_region: (int, int), word_not_found: bool = False) -> TranslationStep:
 
@@ -214,18 +209,12 @@ class Translator:
         w = self.split_text[(self.index*2) + self.index_offset]
         highlight = self.highlight_regions[self.index]
         if self.mode:
-            retrieved_words = {}
+            trans = self.db.GetEngTrans(w)
 
-            if w in retrieved_words.keys():
-                word = retrieved_words[w]
-            else:
-                try:
-                    word = self.db.GetWord(w)
-                    retrieved_words[w] = word
-                except WordNotFoundError:
-                    return self.return_builder([], w, highlight, True)
+            if len(trans) == 0:
+                return self.return_builder([], w, highlight, True)
 
-            return self.return_builder(word.eng_synonyms, w, highlight)
+            return self.return_builder(trans, w, highlight)
             # if len(word.eng_synonyms) == 0:
             #     return self.return_builder([], w)
             # elif len(word.eng_synonyms) == 1:
@@ -234,9 +223,9 @@ class Translator:
             #     return self.return_builder(word.eng_synonyms, w)
 
         else:
-            if w not in self.translations.keys():
-                return self.return_builder([], w, highlight, True)
+            trans = self.db.GetLangTrans(w)
 
-            trans = self.translations[w]
+            if len(trans) == 0:
+                return self.return_builder([], w, highlight, True)
 
             return self.return_builder(trans, w, highlight)

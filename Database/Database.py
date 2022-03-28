@@ -1,9 +1,10 @@
 import sqlite3
-from .Word import Word
-from .DatabaseExceptions import WordNotFoundError
 from typing import List
 from os import listdir
 from os.path import isfile, join
+
+from .Word import Word
+from .DatabaseExceptions import WordNotFoundError
 
 
 def GetLanguageList() -> List[str]:
@@ -147,3 +148,13 @@ class Database:
             word_list.append(Word(word, eng_syn_out, lang_syn_out))
 
         return word_list
+
+    def GetLangTrans(self, eng_word: str) -> List[str]:
+        self.cur.execute('SELECT WordName FROM WordSynEng WHERE EngSyn = ?', (eng_word,))
+        out = self.cur.fetchall()
+        return [o[0] for o in out]
+
+    def GetEngTrans(self, lang_word: str) -> List[str]:
+        self.cur.execute('SELECT EngSyn FROM WordSynEng WHERE WordName = ?', (lang_word,))
+        out = self.cur.fetchall()
+        return [o[0] for o in out]
