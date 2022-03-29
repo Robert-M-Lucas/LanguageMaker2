@@ -1,9 +1,11 @@
 from tkinter import messagebox
 from tkinter import *
+from typing import List
+
+from .InputPopup import InputPopup
+
 from Translator import TranslateAll, Translator, TranslationStep, TranslatePhonetic
 from Database import DatabaseExceptions
-from .InputPopup import InputPopup
-from typing import List
 
 
 class MainGuiTranslation:

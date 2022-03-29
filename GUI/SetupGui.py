@@ -1,12 +1,15 @@
 from tkinter import *
 from nltk_util import download
-from Database.Database import GetLanguageList
 from tkinter import ttk
+import os
+
 from .InputPopup import InputPopup
 from .MainGui import MainGui
-import utils
 from .HelpWindow import HelpWindow
-import os
+
+
+from Database.Database import GetLanguageList
+import utils
 
 
 class SetupGui:

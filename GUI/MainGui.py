@@ -63,5 +63,3 @@ class MainGui(MainGuiTranslation):
         self.trans_top_root = None
 
         self.master.mainloop()
-
-

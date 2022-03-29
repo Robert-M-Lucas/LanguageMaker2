@@ -1,6 +1,7 @@
 from tkinter import *
 from tkhtmlview import HTMLLabel
 import os
+
 from utils import ROOT_DIR
 
 

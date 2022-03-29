@@ -1,8 +1,10 @@
 from tkinter import *
+from tkinter import messagebox
+
 from .InputPopup import InputPopup
 from .WordManager import WordManager
 from .HelpWindow import HelpWindow
-from tkinter import messagebox
+
 from Translator import PUNCTUATION
 
 

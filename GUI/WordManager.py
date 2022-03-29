@@ -1,6 +1,11 @@
 from tkinter import *
+from tkinter import messagebox
+
 from .SynonymManager import SynonymManager
 from .HelpWindow import HelpWindow
+from Extensions.EntryWithPlaceholder import EntryWithPlaceholder
+
+from Translator import PUNCTUATION
 
 
 class WordManager:
@@ -33,7 +38,7 @@ class WordManager:
         Entry(self.left, textvariable=self.word_name_str).pack(fill=X)
         Label(self.left, text=f"Word in phonetic English").pack(fill=X)
         self.word_name_eng_str = StringVar(self.top, value=self.word.phonetic_eng)
-        Entry(self.left, textvariable=self.word_name_eng_str).pack(fill=X)
+        EntryWithPlaceholder(self.left, "Same as word name", textvariable=self.word_name_eng_str).pack(fill=X)
         Label(self.left, text=f"'{lang}' synonyms").pack(fill=X)
         Button(self.left, text="Synonym manager", command=lambda: SynonymManager(self, lang)).pack(fill=X)
         Label(self.left, text=f"English synonyms").pack(fill=X)
@@ -48,6 +53,12 @@ class WordManager:
         self.save_btn.pack(fill=X)
 
     def save(self):
+        for c in PUNCTUATION:
+            if c in self.word_name_str.get():
+                messagebox.showerror("NOT SAVED", "NOT SAVED: Word name cannot contain punctuation or "
+                                                  "special characters other than '_'")
+                return
+
         self.word.new_name = self.word_name_str.get()
         self.word.phonetic_eng = self.word_name_eng_str.get()
         desc_text = self.desc_text.get("1.0", END)
