@@ -36,7 +36,8 @@ class Database:
 
         self.con.commit()
 
-    def AddWord(self, word_name: str, phonetic_eng: str = "", description: str = "", lang_synonyms: List[str] = (), eng_synonyms: List[str] = ()):
+    def AddWord(self, word_name: str, phonetic_eng: str = "", description: str = "", lang_synonyms: List[str] = (),
+                eng_synonyms: List[str] = ()):
         print(f"\nCreating word: {word_name}")
 
         self.cur.execute('INSERT INTO Words VALUES (?, ?, ?)',
@@ -110,7 +111,9 @@ class Database:
         self.cur.execute('DELETE FROM Words WHERE WordName=:word', {"word": word_name})
         self.cur.execute('DELETE FROM WordSynEng WHERE WordName=:word', {"word": word_name})
         self.cur.execute('DELETE FROM WordSynLang WHERE WordName=:word', {"word": word_name})
+        print(f"Done")
         self.con.commit()
+        print(f"Committed")
 
     def GetWord(self, word_name: str) -> Word:
         self.cur.execute('SELECT * FROM Words WHERE WordName=:word', {"word": word_name})

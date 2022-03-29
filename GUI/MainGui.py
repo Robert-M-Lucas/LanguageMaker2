@@ -15,29 +15,29 @@ class MainGui(MainGuiTranslation):
         self.database = Database(lang)
 
         self.master = Tk()
-        self.master.title("Language Maker 2 - " + lang)
+        self.master.title(f"Language Maker 2 - '{lang}'")
         self.root = Frame(self.master)
-        self.root.pack()
+        self.root.pack(fill=X, expand=1)
 
         HelpWindow(self.master, "MainGui")
 
-        Button(self.root, text="Word Manager", command=lambda: WordSelector(self, lang)).pack(fill=X)
+        Button(self.root, text="Word Manager", command=lambda: WordSelector(self, lang)).pack(fill=X, expand=1)
 
         self.mid_frame = Frame(self.root)
-        self.mid_frame.pack()
+        self.mid_frame.pack(fill=X, expand=1)
 
         self.left = Frame(self.mid_frame)
-        self.left.grid(row=0, column=0)
+        self.left.grid(row=0, column=0, sticky=N+E+S+W)
         self.right = Frame(self.mid_frame)
-        self.right.grid(row=0, column=1)
+        self.right.grid(row=0, column=1, sticky=N+E+S+W)
 
-        Label(self.left, text="Text in").pack()
+        Label(self.left, text="Text in").pack(fill=X, expand=1)
         self.text_in = Text(self.left, width=40, height=15)
-        self.text_in.pack()
+        self.text_in.pack(fill=X, expand=1)
 
-        Label(self.right, text="Translated text").pack()
+        Label(self.right, text="Translated text").pack(fill=X, expand=1)
         self.trans_text = Text(self.right, width=40, height=15)
-        self.trans_text.pack()
+        self.trans_text.pack(fill=X, expand=1)
 
         self.left_bottom = Frame(self.left)
         self.left_bottom.pack(fill=X, expand=1)
@@ -51,7 +51,7 @@ class MainGui(MainGuiTranslation):
             .grid(row=0, column=1, sticky=N+E+S+W)
 
         self.right_bottom = Frame(self.right)
-        self.right_bottom.pack(fill=X)
+        self.right_bottom.pack(fill=X, expand=1)
 
         Button(self.right_bottom, text=f"English to {lang}", command=lambda: self.translate(False), width=30) \
             .grid(row=0, column=0, sticky=N + E + S + W)

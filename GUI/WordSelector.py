@@ -2,6 +2,8 @@ from tkinter import *
 from .InputPopup import InputPopup
 from .WordManager import WordManager
 from .HelpWindow import HelpWindow
+from tkinter import messagebox
+from Translator import PUNCTUATION
 
 
 class WordSelector:
@@ -11,7 +13,8 @@ class WordSelector:
         self.main_gui = main_gui
         self.top = Toplevel(main_gui.master)
         self.top.grab_set()
-        self.top.title("Word Selector")
+        self.default_title = "Word Selector"
+        self.top.title(self.default_title)
 
         HelpWindow(self.top, "WordSelector")
 
@@ -35,8 +38,19 @@ class WordSelector:
 
     def create_word(self, word_name: str):
         # TODO: Show error if word already exists or contains illegal character
-        self.main_gui.database.AddWord(word_name.replace(" ", "_"))
+
+        word_name = word_name.replace(" ", "_")
+
+        for c in PUNCTUATION:
+            if c in word_name:
+                messagebox.showerror("Illegal character in word name", "Word name cannot contain punctuation or "
+                                                                       "special characters other than '_'")
+                return
+
+        self.main_gui.database.AddWord(word_name)
+
         self.update_words()
+        self.edit_word(word_name)
 
     def update_words(self, query=None):
         self.current_word_name_list = self.main_gui.database.GetAllWordNames()
@@ -55,9 +69,15 @@ class WordSelector:
         self.main_gui.database.DeleteWord(self.current_word_name_list[self.lb.curselection()[0]])
         self.update_words()
 
-    def edit_word(self):
-        WordManager(self.top, self.main_gui, self, self.lang, self.current_word_name_list[self.lb.curselection()[0]])
+    def edit_word(self, word=None):
+        if word is None:
+            word = self.current_word_name_list[self.lb.curselection()[0]]
+        WordManager(self.top, self.main_gui, self, self.lang, word)
         self.top.withdraw()
 
     def search(self):
         self.update_words(query=self.search_entry.get())
+        if self.search_entry.get() == "":
+            self.top.title(self.default_title)
+        else:
+            self.top.title(f"Search for '{self.search_entry.get()}'")

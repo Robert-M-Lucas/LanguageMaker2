@@ -14,16 +14,16 @@ class SetupGui:
         self.master = Tk()
         self.master.title("Pick a language")
         self.root = Frame(self.master)
-        self.root.pack()
+        self.root.pack(fill=X, expand=1)
 
         HelpWindow(self.master, "SetupGui")
 
         if has_nltk:
-            Label(self.root, text="NLTK Downloaded").pack(fill=X)
-            Button(self.root, text="Re-Download", command=download).pack(fill=X)
+            Label(self.root, text="NLTK Downloaded").pack(fill=X, expand=1)
+            Button(self.root, text="Re-Download", command=download).pack(fill=X, expand=1)
         else:
-            Label(self.root, text="NLTK Not Downloaded\nSome functionality might be missing").pack(fill=X)
-            Button(self.root, text="Download", command=download).pack(fill=X)
+            Label(self.root, text="NLTK Not Downloaded\nSome functionality might be missing").pack(fill=X, expand=1)
+            Button(self.root, text="Download", command=download).pack(fill=X, expand=1)
 
         ttk.Separator(self.root, orient=HORIZONTAL).pack(fill=X, pady=3)
 
