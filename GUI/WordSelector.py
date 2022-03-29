@@ -6,6 +6,7 @@ from .WordManager import WordManager
 from .HelpWindow import HelpWindow
 
 from Translator import PUNCTUATION
+from Extensions.EntryWithPlaceholder import EntryWithPlaceholder
 
 
 class WordSelector:
@@ -22,7 +23,7 @@ class WordSelector:
 
         self.entry_frame = Frame(self.top)
         self.entry_frame.pack(fill=X)
-        self.search_entry = Entry(self.entry_frame)
+        self.search_entry = EntryWithPlaceholder(self.entry_frame, "Search...")
         self.search_entry.grid(row=0, column=0)
         # TODO: Make this button functional
         Button(self.entry_frame, text="🔎", command=self.search).grid(row=0, column=1)
