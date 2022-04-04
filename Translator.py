@@ -65,6 +65,34 @@ def TranslatePhonetic(text_in: str, db: Database) -> str:
 
 
 def TranslateAll(text_in: str, db: Database, mode: bool) -> str:
+    translator = Translator(text_in, db, mode)
+
+    string = ""
+
+    while True:
+        step = translator.step()
+        translator.index += 1
+        if step is None:
+            break
+
+        string += step.starting_punct
+
+        if step.word_not_found:
+            string += f"['{step.source_word}' not a word]"
+        elif len(step.translation_options) == 1:
+            string += step.translation_options[0]
+        elif len(step.translation_options) > 1:
+            string += "[" + "/".join(step.translation_options) + "]"
+        else:
+            string += f"[NT for '{step.source_word}']"
+
+        string += step.trailing_punct
+
+    return string
+
+
+""" Old translate all
+def TranslateAll(text_in: str, db: Database, mode: bool) -> str:
     if len(text_in) == 0:
         return ""
 
@@ -123,7 +151,7 @@ def TranslateAll(text_in: str, db: Database, mode: bool) -> str:
             punctuation = not punctuation
 
     return out_str
-
+"""
 
 @dataclass
 class TranslationStep:
@@ -207,11 +235,14 @@ class Translator:
 
         w = self.split_text[(self.index * 2) + self.index_offset]
         highlight = self.highlight_regions[self.index]
-        if self.mode:
-            trans = self.db.GetEngTrans(w)
 
-            if len(trans) == 0:
+        if self.mode:
+            try:
+                self.db.GetWord(w)
+            except WordNotFoundError:
                 return self.return_builder([], w, highlight, True)
+
+            trans = self.db.GetEngTrans(w)
 
             return self.return_builder(trans, w, highlight)
             # if len(word.eng_synonyms) == 0:
@@ -223,8 +254,5 @@ class Translator:
 
         else:
             trans = self.db.GetLangTrans(w)
-
-            if len(trans) == 0:
-                return self.return_builder([], w, highlight, True)
 
             return self.return_builder(trans, w, highlight)

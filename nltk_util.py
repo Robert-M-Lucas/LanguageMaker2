@@ -1,5 +1,5 @@
-from nltk.downloader import download
+from nltk.downloader import download as dload
 
 
 def download():
-    download('wordnet')
+    dload('wordnet')

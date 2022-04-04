@@ -56,6 +56,13 @@ class MainGuiTranslation:
         self.trans_top_root = Frame(self.trans_top)
         self.trans_top_root.pack()
 
+        # try:
+        #     self.database.GetWord(step.source_word)
+        #     wordExists = True
+        # except DatabaseExceptions.WordNotFoundError:
+        #     wordExists = False
+
+
         if len(step.translation_options) > 0:
             Label(self.trans_top_root, text=f"Translation for {step.source_word}").pack(fill=X)
 
@@ -66,10 +73,18 @@ class MainGuiTranslation:
             lb.pack(fill=X)
 
             Button(self.trans_top_root, text="Add synonym", command=lambda:
-            InputPopup(self.trans_top_root, self.add_syn_trans, f"Enter synonym for {step.source_word}", True, [step])
+            InputPopup(self.trans_top_root, self.add_syn_trans, f"Enter synonym for '{step.source_word}'", True, [step])
                    ).pack(fill=X)
             Button(self.trans_top_root, text="Select", command=lambda: self.insert_word_stepped(lb, lb_list)).pack(
                 fill=X)
+
+        elif step.word_not_found:
+            Label(self.trans_top_root, text=f"'{step.source_word}' doesn't exist").pack(fill=X)
+            Button(self.trans_top_root, text=f"Create '{step.source_word}' as new word",
+                   command=lambda: self.create_stepped_word(step)).pack(fill=X)
+
+            Button(self.trans_top_root, text=f"Skip this word",
+                   command=lambda: self.skip_stepped_word(step)).pack(fill=X)
 
         elif step.mode:
             Label(self.trans_top_root, text=f"No synonyms for {step.source_word}").pack(fill=X)
@@ -83,6 +98,17 @@ class MainGuiTranslation:
             InputPopup(self.trans_top_root, self.add_syn_trans, f"Enter synonym for {step.source_word}", True, [step])
                    ).pack(fill=X)
 
+    def create_stepped_word(self, step: TranslationStep):
+        self.database.AddWord(step.source_word)
+
+        self.translator.index -= 1
+        self.stepped_translate()
+
+    def skip_stepped_word(self, step: TranslationStep):
+        self.trans_text.insert(END, f"[NT for '{step.source_word}'] ")
+
+        self.stepped_translate()
+
     def insert_word_stepped(self, lb: Listbox, lb_list: List[str]):
         self.trans_text.insert(END, lb_list[lb.curselection()[0]] + " ")
 
@@ -95,13 +121,14 @@ class MainGuiTranslation:
 
     def add_syn_trans(self, syn, step: TranslationStep):
         if step.mode:
+
             word = self.database.GetWord(step.source_word)
-            word.eng_synonyms += ";" + syn
+            word.eng_synonyms += [syn]
 
             self.database.UpdateWord(word)
 
             self.translator.index -= 1
-            self.translator.re_index()
+            # self.translator.re_index()
 
             self.stepped_translate()
         else:

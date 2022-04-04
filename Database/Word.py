@@ -3,7 +3,7 @@
 class Word:
     def __init__(self, word_data, eng_syn_data, lang_syn_data):
         self.name = word_data[0]
-        self.new_name = None
+        self.new_name = self.name
         self.phonetic_eng = word_data[1]
         self.description = word_data[2]
 

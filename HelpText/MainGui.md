@@ -38,4 +38,5 @@ The translation will complete without stopping.
 Some codes you may not understand:
 
 - [NT for ***word***] - No translation for this word
+- [***word*** doesn't exist] - This word doesn't exist in your custom language
 - [***word***/***word***/***word***] - These were the available translations for this word
