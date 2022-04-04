@@ -17,6 +17,14 @@ class SetupGui:
         self.has_nltk = has_nltk
         self.master = Tk()
         self.master.title("Pick a language")
+        with open("VERSION.txt", "r") as f:
+            self.version = f.read()
+
+        self.top_frame = Frame(self.master)
+        self.top_frame.pack()
+        Label(self.top_frame, text="Language Maker 2").pack(fill=X, side=LEFT)
+        Label(self.top_frame, text=self.version, fg="grey").pack(fill=X, side=RIGHT)
+
         self.root = None
         self.lang_selected = StringVar()
         self.error_label = None
@@ -38,7 +46,7 @@ class SetupGui:
             Label(self.root, text="NLTK Not Downloaded\nSome functionality might be missing").pack(fill=X, expand=1)
             Button(self.root, text="Download", command=download).pack(fill=X, expand=1)
 
-        ttk.Separator(self.root, orient=HORIZONTAL).pack(fill=X, pady=3)
+        ttk.Separator(self.root, orient=HORIZONTAL).pack(fill=X, pady=(4, 0))
 
         langs = GetLanguageList()
 
@@ -55,7 +63,11 @@ class SetupGui:
         Button(self.root, text="Create new language", command=self.create_lang).pack(fill=X)
 
         self.error_label = Label(self.root, text="You can press F1 for help\non most windows")
-        self.error_label.pack()
+        self.error_label.pack(side=LEFT)
+
+        # ttk.Separator(self.root, orient=HORIZONTAL).pack(fill=X)
+
+        # Label(self.root, text=self.version, fg="grey").pack(fill=X, side=RIGHT)
 
         self.master.mainloop()
 
@@ -81,8 +93,8 @@ class SetupGui:
         if self.lang_selected.get() == lang:
             try:
                 os.remove(f"Data/{lang}.db")
-                messagebox.showinfo("Success", f"Language '{lang}' deleted")
                 self.reload_gui()
+                messagebox.showinfo("Success", f"Language '{lang}' deleted")
             except Exception as e:
                 messagebox.showerror("Language deletion error", f"Error: {e}")
                 self.reload_gui()
