@@ -8,7 +8,6 @@ from .InputPopup import InputPopup
 from .MainGui import MainGui
 from .HelpWindow import HelpWindow
 
-
 from Database.Database import GetLanguageList
 import utils
 

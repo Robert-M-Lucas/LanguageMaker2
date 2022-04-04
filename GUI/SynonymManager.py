@@ -82,14 +82,18 @@ class SynonymManager:
                     else:
                         synonyms_dict[wl] += 1
 
-        # TODO: This code can be greatly optimised
         else:
-            all_words = self.word_manager.main_gui.database.GetAllWords()
+            # Check if this word appears in any other words' synonym list
+            words = self.word_manager.main_gui.database.BackSearchLangSyn(self.word_manager.word.name)
+            for wl in words:
+                if wl not in synonyms_dict.keys():
+                    synonyms_dict[wl] = 4
+                else:
+                    synonyms_dict[wl] += 5
 
-            for word in all_words:
-                for wl in word.lang_synonyms:
-                    if wl == word.name or wl in self.syn_list or wl == self.word_manager.word.name:
-                        continue
+            for i in self.syn_list:
+                words = self.word_manager.main_gui.database.BackSearchLangSyn(i)
+                for wl in words:
                     if wl not in synonyms_dict.keys():
                         synonyms_dict[wl] = 0
                     else:

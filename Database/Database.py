@@ -4,7 +4,7 @@ from os import listdir
 from os.path import isfile, join
 
 from .Word import Word
-from .DatabaseExceptions import WordNotFoundError
+from .DatabaseExceptions import WordNotFoundError, WordAlreadyExistsError
 
 
 def GetLanguageList() -> List[str]:
@@ -53,7 +53,8 @@ class Database:
 
         self.con.commit()
 
-    def UpdateWordDB(self, word_name: str, phonetic_eng: str = "", description: str = "", lang_synonyms: List[str] = "", eng_synonyms: List[str] = ""):
+    def UpdateWordDB(self, word_name: str, phonetic_eng: str = "", description: str = "", lang_synonyms: List[str] = "",
+                     eng_synonyms: List[str] = ""):
         self.cur.execute('''UPDATE Words Set PhoneticEng = ?,
                           Description = ?
                           WHERE WordName = ?''',
@@ -97,12 +98,29 @@ class Database:
 
         self.con.commit()
 
+    def ChangeWordName(self, old_name: str, new_name: str):
+        try:
+            self.GetWord(new_name)
+            raise WordAlreadyExistsError
+        except WordNotFoundError:
+            pass
+
+        self.cur.execute("UPDATE Words SET WordName = ? WHERE WordName = ?", (new_name, old_name))
+
+        self.cur.execute("UPDATE WordSynEng SET WordName = ? WHERE WordName = ?", (new_name, old_name))
+
+        self.cur.execute("UPDATE WordSynLang SET WordName = ? WHERE WordName = ?", (new_name, old_name))
+
+        self.cur.execute("UPDATE WordSynLang SET LangSyn = ? WHERE LangSyn = ?", (new_name, old_name))
+
+        self.con.commit()
+
     def UpdateWord(self, word: Word):
         print(f"\nUpdating word:\n{word}")
 
         if word.new_name != word.name:
-            self.DeleteWord(word.name)
-            self.AddWord(word.new_name, word.phonetic_eng, word.description, word.lang_synonyms, word.eng_synonyms)
+            self.ChangeWordName(word.name, word.new_name)
+            self.UpdateWordDB(word.new_name, word.phonetic_eng, word.description, word.lang_synonyms, word.eng_synonyms)
         else:
             self.UpdateWordDB(word.name, word.phonetic_eng, word.description, word.lang_synonyms, word.eng_synonyms)
 
@@ -154,6 +172,11 @@ class Database:
 
     def GetLangTrans(self, eng_word: str) -> List[str]:
         self.cur.execute('SELECT WordName FROM WordSynEng WHERE EngSyn = ?', (eng_word,))
+        out = self.cur.fetchall()
+        return [o[0] for o in out]
+
+    def BackSearchLangSyn(self, lang_syn: str):
+        self.cur.execute('SELECT WordName FROM WordSynLang WHERE LangSyn = ?', (lang_syn,))
         out = self.cur.fetchall()
         return [o[0] for o in out]
 
