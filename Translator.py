@@ -77,7 +77,6 @@ def TranslateAll(text_in: str, db: Database, mode: bool) -> str:
 
         punctuation = start_punctuation
         for w in split_text:
-            print(punctuation)
             if punctuation:
                 out_str += w
             else:
@@ -150,11 +149,10 @@ class Translator:
 
         i = 0
         for j, sect in enumerate(self.split_text):
-            print(sect)
-            if (j%2 == 0 and self.start_punctuation) or (not j%2 == 0 and not self.start_punctuation):
+            if (j % 2 == 0 and self.start_punctuation) or (not j % 2 == 0 and not self.start_punctuation):
                 i += len(sect) - 1
                 continue
-            self.highlight_regions.append((i, i+len(sect)))
+            self.highlight_regions.append((i, i + len(sect)))
             i += len(sect) + 1
 
         while True:
@@ -180,7 +178,7 @@ class Translator:
 
     # def re_index(self):
     #     self.db_all_words = self.db.GetAllWords()
-#
+    #
     #     self.translations = {}
     #     for word in self.db_all_words:
     #         for s in word.eng_synonyms:
@@ -189,24 +187,25 @@ class Translator:
     #             else:
     #                 self.translations[s] = [word.name]
 
-    def return_builder(self, options: List[str], w: str, highlight_region: (int, int), word_not_found: bool = False) -> TranslationStep:
+    def return_builder(self, options: List[str], w: str, highlight_region: (int, int),
+                       word_not_found: bool = False) -> TranslationStep:
 
         starting_punct = ""
         trailing_punct = ""
 
         if self.start_punctuation:
-            starting_punct = self.split_text[self.index*2]
+            starting_punct = self.split_text[self.index * 2]
         else:
-            trailing_punct = self.split_text[self.index*2+1]
+            trailing_punct = self.split_text[self.index * 2 + 1]
 
         return TranslationStep(options, w, word_not_found, self.index, len(self.split_text), self.mode,
                                highlight_region, starting_punct, trailing_punct)
 
     def step(self) -> TranslationStep | None:
-        if (self.index*2) + self.index_offset >= len(self.split_text):
+        if (self.index * 2) + self.index_offset >= len(self.split_text):
             return None
 
-        w = self.split_text[(self.index*2) + self.index_offset]
+        w = self.split_text[(self.index * 2) + self.index_offset]
         highlight = self.highlight_regions[self.index]
         if self.mode:
             trans = self.db.GetEngTrans(w)

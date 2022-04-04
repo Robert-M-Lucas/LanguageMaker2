@@ -8,11 +8,6 @@ haven't been cached in advance
 Press F1 on most screens for help - there isn't much explanation for how the program works
 here as I am trying to make it self-explanatory
 
-### Translation Errors
-- [NT for {word name}] - No translation for this word; add a translation by editing the word's 
-English synonyms
-
-Using 'stepped' translation allows you to resolve errors as they come up
 
 ### Dependencies
 ```pip install *library name*```

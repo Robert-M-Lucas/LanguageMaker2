@@ -1,17 +1,16 @@
-"""
-https://stackoverflow.com/questions/27820178/how-to-add-placeholder-to-an-entry-in-tkinter
-
-- With a few modifications
-"""
-
 import tkinter as tk
 
 
 class EntryWithPlaceholder(tk.Entry):
-    def __init__(self, master, placeholder, **kwargs):
-        super().__init__(master, kwargs)
+    def __init__(self, master, placeholder, text="", **kwargs):
+        self.textvariable = tk.StringVar()
+        self.textvariable.set(text)
+
+        super().__init__(master, textvariable=self.textvariable,  **kwargs)
 
         color = 'grey'
+
+
 
         self.placeholder = placeholder
         self.placeholder_color = color
@@ -22,6 +21,17 @@ class EntryWithPlaceholder(tk.Entry):
 
         if super().get() == "":
             self.put_placeholder()
+
+    def get(self) -> str:
+        potential_return = self.textvariable.get()
+
+        if potential_return == self.placeholder:
+            return ""
+        else:
+            return potential_return
+
+    def set(self, text):
+        self.textvariable.set(text)
 
     def put_placeholder(self):
         self.insert(0, self.placeholder)
