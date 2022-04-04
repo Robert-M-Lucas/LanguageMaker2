@@ -4,3 +4,7 @@ class WordNotFoundError(Exception):
 
 class WordAlreadyExistsError(Exception):
     pass
+
+
+class WordNameChangeReferenceError(Exception):
+    pass

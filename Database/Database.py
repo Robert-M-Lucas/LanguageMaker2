@@ -4,7 +4,7 @@ from os import listdir
 from os.path import isfile, join
 
 from .Word import Word
-from .DatabaseExceptions import WordNotFoundError, WordAlreadyExistsError
+from .DatabaseExceptions import WordNotFoundError, WordAlreadyExistsError, WordNameChangeReferenceError
 
 
 def GetLanguageList() -> List[str]:
@@ -111,9 +111,15 @@ class Database:
 
         self.cur.execute("UPDATE WordSynLang SET WordName = ? WHERE WordName = ?", (new_name, old_name))
 
-        self.cur.execute("UPDATE WordSynLang SET LangSyn = ? WHERE LangSyn = ?", (new_name, old_name))
+        try:
+            self.cur.execute("UPDATE WordSynLang SET LangSyn = ? WHERE LangSyn = ?", (new_name, old_name))
+            integrity_error = False
+        except sqlite3.IntegrityError:
+            integrity_error = True
 
         self.con.commit()
+
+        raise WordNameChangeReferenceError
 
     def UpdateWord(self, word: Word):
         print(f"\nUpdating word:\n{word}")
