@@ -1,6 +1,7 @@
 from tkinter import *
 from nltk_util import download
 from tkinter import ttk
+from tkinter import messagebox
 import os
 
 from .InputPopup import InputPopup
@@ -14,16 +15,24 @@ import utils
 
 class SetupGui:
     def __init__(self, has_nltk: bool):
-        # TODO: Add support for deleting languages
-
+        self.has_nltk = has_nltk
         self.master = Tk()
         self.master.title("Pick a language")
+        self.root = None
+        self.lang_selected = StringVar()
+        self.error_label = None
+
+        self.reload_gui()
+
+    def reload_gui(self):
+        if self.root is not None:
+            self.root.destroy()
         self.root = Frame(self.master)
         self.root.pack(fill=X, expand=1)
 
         HelpWindow(self.master, "SetupGui")
 
-        if has_nltk:
+        if self.has_nltk:
             Label(self.root, text="NLTK Downloaded").pack(fill=X, expand=1)
             Button(self.root, text="Re-Download", command=download).pack(fill=X, expand=1)
         else:
@@ -32,16 +41,17 @@ class SetupGui:
 
         ttk.Separator(self.root, orient=HORIZONTAL).pack(fill=X, pady=3)
 
-        self.langs = GetLanguageList()
+        langs = GetLanguageList()
 
-        self.lang_selected = StringVar()
-        if len(self.langs) > 0:
-            self.lang_selected.set(self.langs[0])
+        if len(langs) > 0:
+            self.lang_selected.set(langs[0])
 
-            drop = OptionMenu(self.root, self.lang_selected, *self.langs)
+            drop = OptionMenu(self.root, self.lang_selected, *langs)
             drop.pack(fill=X)
 
             Button(self.root, text="Use this language", command=self.get_lang_from_select).pack(fill=X)
+
+            Button(self.root, text="Delete this language", command=self.delete_lang).pack(fill=X)
 
         Button(self.root, text="Create new language", command=self.create_lang).pack(fill=X)
 
@@ -63,6 +73,22 @@ class SetupGui:
 
     def get_lang_from_select(self):
         self.start_main_gui(self.lang_selected.get())
+
+    def delete_lang(self):
+        lang = self.lang_selected.get()
+        InputPopup(self.master, self.delete_lang_confirm, f"Type '{lang}' to delete", lang)
+
+    def delete_lang_confirm(self, lang):
+        if self.lang_selected.get() == lang:
+            try:
+                os.remove(f"Data/{lang}.db")
+                messagebox.showinfo("Success", f"Language '{lang}' deleted")
+                self.reload_gui()
+            except Exception as e:
+                messagebox.showerror("Language deletion error", f"Error: {e}")
+                self.reload_gui()
+        else:
+            messagebox.showerror("Failed", f"Language '{self.lang_selected.get()}' didn't match entry '{lang}'")
 
     def start_main_gui(self, lang):
         for l in lang:
