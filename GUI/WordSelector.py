@@ -25,7 +25,6 @@ class WordSelector:
         self.entry_frame.pack(fill=X)
         self.search_entry = EntryWithPlaceholder(self.entry_frame, "Search...")
         self.search_entry.grid(row=0, column=0)
-        # TODO: Make this button functional
         Button(self.entry_frame, text="🔎", command=self.search).grid(row=0, column=1)
 
         self.lb_var = StringVar(value=self.current_word_name_list)
@@ -40,8 +39,6 @@ class WordSelector:
         InputPopup(self.top, self.create_word, "Enter new word name:", True)
 
     def create_word(self, word_name: str):
-        # TODO: Show error if word already exists or contains illegal character
-
         word_name = word_name.replace(" ", "_")
 
         for c in PUNCTUATION:

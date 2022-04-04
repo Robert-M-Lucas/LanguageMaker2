@@ -14,6 +14,8 @@ import utils
 
 class SetupGui:
     def __init__(self, has_nltk: bool):
+        # TODO: Add support for deleting languages
+
         self.master = Tk()
         self.master.title("Pick a language")
         self.root = Frame(self.master)

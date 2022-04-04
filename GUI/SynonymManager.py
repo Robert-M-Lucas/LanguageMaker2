@@ -87,8 +87,7 @@ class SynonymManager:
             all_words = self.word_manager.main_gui.database.GetAllWords()
 
             for word in all_words:
-                for w in word.lang_synonyms:
-                    wl = w
+                for wl in word.lang_synonyms:
                     if wl == word.name or wl in self.syn_list or wl == self.word_manager.word.name:
                         continue
                     if wl not in synonyms_dict.keys():

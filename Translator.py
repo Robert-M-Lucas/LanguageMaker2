@@ -5,8 +5,6 @@ from Database.DatabaseExceptions import WordNotFoundError
 from dataclasses import dataclass
 from typing import List
 
-# TODO: Improve synonym lookup efficiency by using DB lookup, not GetAllWords()
-
 PUNCTUATION = ".,?\"'[]{};:<>/\\-=+|`~@#$%^&*()\n! "
 
 
