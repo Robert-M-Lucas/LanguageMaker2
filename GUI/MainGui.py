@@ -16,6 +16,7 @@ class MainGui(MainGuiTranslation):
 
         self.master = Tk()
         self.master.title(f"Language Maker 2 - '{lang}'")
+        self.master.focus_force()
         self.root = Frame(self.master)
         self.root.pack(fill=X, expand=1)
 
@@ -32,12 +33,22 @@ class MainGui(MainGuiTranslation):
         self.right.grid(row=0, column=1, sticky=N+E+S+W)
 
         Label(self.left, text="Text in").pack(fill=X, expand=1)
-        self.text_in = Text(self.left, width=40, height=15)
-        self.text_in.pack(fill=X, expand=1)
+        self.left_text = Frame(self.left)
+        self.left_text.pack(fill=X, expand=1)
+        self.text_in = Text(self.left_text, width=40, height=15)
+        self.text_in.pack(side=LEFT, fill=X, expand=1)
+        sbl = Scrollbar(self.left_text, command=self.text_in.yview)
+        self.text_in.config(yscrollcommand=sbl.set)
+        sbl.pack(side=RIGHT, fill=Y)
 
         Label(self.right, text="Translated text").pack(fill=X, expand=1)
-        self.trans_text = Text(self.right, width=40, height=15)
-        self.trans_text.pack(fill=X, expand=1)
+        self.right_text = Frame(self.right)
+        self.right_text.pack(fill=X, expand=1)
+        self.trans_text = Text(self.right_text, width=40, height=15)
+        self.trans_text.pack(side=LEFT, fill=X, expand=1)
+        sbr = Scrollbar(self.right_text, command=self.trans_text.yview)
+        self.trans_text.config(yscrollcommand=sbr.set)
+        sbr.pack(side=RIGHT, fill=Y)
 
         self.left_bottom = Frame(self.left)
         self.left_bottom.pack(fill=X, expand=1)

@@ -19,6 +19,7 @@ class InputPopup:
 
         self.e = Entry(self.top)
         self.e.pack(fill=X)
+        self.e.focus_set()
         b = Button(self.top, text='Submit', command=self.ret)
         b.pack(fill=X)
 

@@ -65,7 +65,11 @@ class SetupGui:
             drop = OptionMenu(self.root, self.lang_selected, *langs)
             drop.pack(fill=X)
 
-            Button(self.root, text="Use this language", command=self.get_lang_from_select).pack(fill=X)
+            b = Button(self.root, text="Use this language", command=self.get_lang_from_select)
+            b.focus_set()
+            b.pack(fill=X)
+
+
 
             Button(self.root, text="Delete this language", command=self.delete_lang).pack(fill=X)
 

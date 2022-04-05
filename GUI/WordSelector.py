@@ -33,7 +33,9 @@ class WordSelector:
 
         Button(self.top, text="Edit selected word", command=self.edit_word).pack(fill=X)
         Button(self.top, text="Delete selected word", command=self.delete_word).pack(fill=X)
-        Button(self.top, text="Create new word", command=self.get_new).pack(fill=X)
+        b = Button(self.top, text="Create new word", command=self.get_new)
+        b.pack(fill=X)
+        b.focus_set()
 
     def get_new(self):
         InputPopup(self.top, self.create_word, "Enter new word name:", True)

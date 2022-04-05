@@ -4,7 +4,7 @@ import shutil
 
 
 def compile_cache():
-    print("Cache not created, creating now...")
+    print("Cache not created, creating now")
 
     try:
         shutil.rmtree("CACHE")

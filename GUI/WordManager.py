@@ -47,11 +47,18 @@ class WordManager:
 
         # RIGHT
         Label(self.right, text="Description").pack(fill=X)
-        self.desc_text = Text(self.right, height=8, width=40)
+        self.desc_frm = Frame(self.right)
+        self.desc_frm.pack(fill=X, expand=1)
+
+        self.desc_text = Text(self.desc_frm, height=8, width=40)
         self.desc_text.insert(END, self.word.description)
-        self.desc_text.pack(fill=BOTH)
+        self.desc_text.pack(side=LEFT, fill=BOTH)
+        sb = Scrollbar(self.desc_frm, command=self.desc_text.yview)
+        self.desc_text.config(yscrollcommand=sb.set)
+        sb.pack(side=RIGHT, fill=Y)
         self.save_btn = Button(self.right, text="Save", command=self.save)
         self.save_btn.pack(fill=X)
+        self.save_btn.focus_set()
 
     def save(self):
         for c in PUNCTUATION:
@@ -67,7 +74,7 @@ class WordManager:
             desc_text = desc_text[:-1]
         self.word.description = desc_text
         self.main_gui.database.UpdateWord(self.word)
-        self.save_btn.configure(text="Saved")
+        self.save_btn.configure(text="Saved!")
         self.top.after(2000, lambda: self.save_btn.configure(text="Save"))
 
     def on_closing(self):
