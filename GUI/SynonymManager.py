@@ -1,9 +1,11 @@
 from itertools import chain
 from tkinter import *
 from nltk.corpus import wordnet
+import time
 
 from .HelpWindow import HelpWindow
 
+MAX_SYNONYM_LOOKUP_TIME = 5
 
 class SynonymManager:
     def __init__(self, word_manager, mode: str):
@@ -70,7 +72,13 @@ class SynonymManager:
         synonyms_dict = {}
 
         if self.mode == "":
+            start_time = time.time()
+
             for curr_syn in self.syn_list:
+                if time.time() - start_time > MAX_SYNONYM_LOOKUP_TIME:
+                    print("Synonym lookup time exceeded max lookup time")
+                    break
+
                 synonyms = wordnet.synsets(curr_syn)
                 lemmas = set(chain.from_iterable([word.lemma_names() for word in synonyms]))
                 for w in lemmas:
@@ -83,15 +91,24 @@ class SynonymManager:
                         synonyms_dict[wl] += 1
 
         else:
+            start_time = time.time()
             # Check if this word appears in any other words' synonym list
             words = self.word_manager.main_gui.database.BackSearchLangSyn(self.word_manager.word.name)
             for wl in words:
+                if time.time() - start_time > MAX_SYNONYM_LOOKUP_TIME:
+                    print("Synonym lookup time exceeded max lookup time")
+                    break
+
                 if wl not in synonyms_dict.keys():
                     synonyms_dict[wl] = 4
                 else:
                     synonyms_dict[wl] += 5
 
             for i in self.syn_list:
+                if time.time() - start_time > MAX_SYNONYM_LOOKUP_TIME:
+                    print("Synonym lookup time exceeded max lookup time")
+                    break
+
                 words = self.word_manager.main_gui.database.BackSearchLangSyn(i)
                 for wl in words:
                     if wl not in synonyms_dict.keys():
