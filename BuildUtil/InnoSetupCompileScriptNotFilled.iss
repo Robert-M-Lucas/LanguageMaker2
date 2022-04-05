@@ -2,10 +2,10 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Language Maker 2"
-#define MyAppVersion "1"
+#define MyAppVersion "0.%$"
 #define MyAppPublisher "Robert Lucas"
 #define MyAppURL "about:blank"
-#define MyAppExeName "main.exe"
+#define MyAppExeName "LanguageMaker2.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.

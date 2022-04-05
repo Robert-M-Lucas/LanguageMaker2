@@ -1,8 +1,13 @@
-from tkinter import *
 from nltk_util import download
-from tkinter import ttk
 from tkinter import messagebox
 import os
+
+# import tkinter as tk
+# from tkinter.constants import *
+# from tkinter.ttk import *
+
+from tkinter import *
+from tkinter import ttk
 
 from .InputPopup import InputPopup
 from .MainGui import MainGui
@@ -17,13 +22,17 @@ class SetupGui:
         self.has_nltk = has_nltk
         self.master = Tk()
         self.master.title("Pick a language")
+
+        # style = Style(self.master)
+        # style.theme_use("vista")
+
         with open("VERSION.txt", "r") as f:
-            self.version = f.read()
+            self.version = "v0." + f.read()
 
         self.top_frame = Frame(self.master)
         self.top_frame.pack()
         Label(self.top_frame, text="Language Maker 2").pack(fill=X, side=LEFT)
-        Label(self.top_frame, text=self.version, fg="grey").pack(fill=X, side=RIGHT)
+        Label(self.top_frame, text=self.version, foreground="grey").pack(fill=X, side=RIGHT)
 
         self.root = None
         self.lang_selected = StringVar()
@@ -40,7 +49,7 @@ class SetupGui:
         HelpWindow(self.master, "SetupGui")
 
         if self.has_nltk:
-            Label(self.root, text="NLTK Downloaded").pack(fill=X, expand=1)
+            Label(self.root, text="NLTK Downloaded").pack(fill=X, expand=1, side=TOP)
             Button(self.root, text="Re-Download", command=download).pack(fill=X, expand=1)
         else:
             Label(self.root, text="NLTK Not Downloaded\nSome functionality might be missing").pack(fill=X, expand=1)
