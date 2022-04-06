@@ -1,11 +1,14 @@
 from itertools import chain
 from tkinter import *
+from tkinter import messagebox
 from nltk.corpus import wordnet
 import time
 
 from .HelpWindow import HelpWindow
+from Database.DatabaseExceptions import WordNotFoundError
 
 MAX_SYNONYM_LOOKUP_TIME = 5
+
 
 # TODO: Don't allow identical synonyms
 
@@ -61,7 +64,7 @@ class SynonymManager:
         self.entry_frame.pack(fill=X)
         self.new_syn = StringVar(self.top)
         Entry(self.entry_frame, textvariable=self.new_syn).grid(row=0, column=0)
-        Button(self.entry_frame, text="Add", command=self.add_syn).grid(row=0, column=1)
+        Button(self.entry_frame, text="Add", command=self.try_add_syn).grid(row=0, column=1)
 
         self.update_synonyms()
 
@@ -73,8 +76,35 @@ class SynonymManager:
         self.curr_syns_update()
         self.update_synonyms()
 
-    def add_syn(self):
-        self.syn_list.append(self.new_syn.get())
+    def try_add_syn(self):
+        new_syn = self.new_syn.get()
+
+        if new_syn in self.syn_list:
+            messagebox.showerror("Failed to add synonym", f"Synonym '{new_syn}' already a synonym")
+            return
+
+        if self.mode == "" and new_syn not in wordnet.words("eng"):
+            MsgBox = messagebox.askquestion('Word not english', f"Synonym '{new_syn}' not english. Add anyway?",
+                                            icon='warning')
+
+            if MsgBox == 'no':
+                return
+
+        if self.mode != "":
+            try:
+                self.word_manager.main_gui.database.GetWord(new_syn)
+            except WordNotFoundError:
+                MsgBox = messagebox.askquestion(f"Word not in '{self.mode}'",
+                                                f"Synonym '{new_syn}' not in language '{self.mode}'. Add anyway?",
+                                                icon='warning')
+
+                if MsgBox == 'no':
+                    return
+
+        self.add_syn(new_syn)
+
+    def add_syn(self, syn):
+        self.syn_list.append(syn)
         self.curr_syns_update()
         self.update_synonyms()
 
