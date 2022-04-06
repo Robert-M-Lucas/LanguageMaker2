@@ -20,9 +20,11 @@ import utils
 
 class SetupGui:
     def __init__(self, has_nltk: bool):
+        self.exit = True
         self.has_nltk = has_nltk
         self.master = Tk()
         self.master.title("Pick a language")
+        self.master.protocol("WM_DELETE_WINDOW", exit)
 
         # style = Style(self.master)
         # style.theme_use("vista")
@@ -100,7 +102,8 @@ class SetupGui:
 
     def duplicate_lang(self):
         lang = self.lang_selected.get()
-        InputPopup(self.master, lambda x: self.duplicate_lang_confirm(lang, x), f"Enter language name for '{lang}' duplicate", lang)
+        InputPopup(self.master, lambda x: self.duplicate_lang_confirm(lang, x), f"Enter language name for '{lang}' "
+                                                                                f"duplicate", lang)
 
     def duplicate_lang_confirm(self, lang, new_lang):
         for c in new_lang:
@@ -124,7 +127,7 @@ class SetupGui:
 
     def delete_lang(self):
         lang = self.lang_selected.get()
-        InputPopup(self.master, self.delete_lang_confirm, f"Type '{lang}' to delete", lang)
+        InputPopup(self.master, self.delete_lang_confirm, f"Type '{lang}' to delete\n(case sensitive)", lang)
 
     def delete_lang_confirm(self, lang):
         if self.lang_selected.get() == lang:
@@ -136,7 +139,7 @@ class SetupGui:
                 messagebox.showerror("Language deletion error", f"Error: {e}")
                 self.reload_gui()
         else:
-            messagebox.showerror("Failed", f"Language '{self.lang_selected.get()}' didn't match entry '{lang}'")
+            messagebox.showerror("Failed", f"Language '{self.lang_selected.get()}' did not match entry '{lang}'")
 
     def start_main_gui(self, lang):
         for l in lang:
@@ -144,4 +147,6 @@ class SetupGui:
                 self.error_label.config(text="Banned character in language name")
                 return
         self.master.destroy()
-        MainGui(lang)
+        MainGui(lang, self)
+        if self.exit:
+            exit(0)

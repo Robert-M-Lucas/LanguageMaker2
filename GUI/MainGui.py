@@ -13,8 +13,9 @@ from Extensions.TextWithPlaceholder import TextWithPlaceholder
 
 
 class MainGui(MainGuiTranslation):
-    def __init__(self, lang):
+    def __init__(self, lang, setup_callback):
         self.database = Database(lang)
+        self.setup_callback = setup_callback
 
         self.master = Tk()
         self.master.title(f"Language Maker 2 - '{lang}'")
@@ -24,8 +25,6 @@ class MainGui(MainGuiTranslation):
 
         HelpWindow(self.master, "MainGui")
 
-        Button(self.root, text="Word Manager", command=lambda: WordSelector(self, lang)).pack(fill=X, expand=1)
-
         self.mid_frame = Frame(self.root)
         self.mid_frame.pack(fill=X, expand=1)
 
@@ -34,6 +33,7 @@ class MainGui(MainGuiTranslation):
         self.right = Frame(self.mid_frame)
         self.right.grid(row=0, column=1, sticky=N+E+S+W)
 
+        Button(self.left, text="Word Manager", command=lambda: WordSelector(self, lang)).pack(fill=X, expand=1)
         Label(self.left, text="Text in").pack(fill=X, expand=1)
         self.left_text = Frame(self.left)
         self.left_text.pack(fill=X, expand=1)
@@ -44,6 +44,7 @@ class MainGui(MainGuiTranslation):
         self.text_in.config(yscrollcommand=sbl.set)
         sbl.pack(side=RIGHT, fill=Y)
 
+        Button(self.right, text="Return to language selection", command=self.return_to_setup).pack(fill=X, expand=1)
         Label(self.right, text="Translated text").pack(fill=X, expand=1)
         self.right_text = Frame(self.right)
         self.right_text.pack(fill=X, expand=1)
@@ -78,3 +79,7 @@ class MainGui(MainGuiTranslation):
         self.trans_top_root = None
 
         self.master.mainloop()
+
+    def return_to_setup(self):
+        self.master.destroy()
+        self.setup_callback.exit = False

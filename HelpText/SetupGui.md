@@ -12,6 +12,10 @@ Two languages aren't permitted to have the same name
 
 ### Deleting a language
 To delete a language select it and click 'Delete this language'. A confirmation box will appear
-where you have to type the language name precisely to delete it. 
+where you have to type the language name precisely to delete it.
 
 ***This action is irreversible***
+
+### Duplicating a language
+Select a language and press 'Duplicate this language'. The new language name must be unique and
+has the same character restrictions as other languages

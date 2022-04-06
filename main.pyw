@@ -16,4 +16,5 @@ setup.setup()
 # lemmas = set(chain.from_iterable([word.lemma_names() for word in synonyms]))
 # print(lemmas)
 
-SetupGui(has_nltk)
+while True:
+    SetupGui(has_nltk)
