@@ -18,6 +18,8 @@ installed with.
 
 ```pip install https://github.com/pyinstaller/pyinstaller/archive/develop.zip```
 
+You can find a build version in the 'dist' folder
+
 ### Dependencies
 ```pip install *library name*```
 - requests
