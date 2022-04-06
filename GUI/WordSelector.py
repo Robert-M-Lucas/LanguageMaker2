@@ -68,7 +68,15 @@ class WordSelector:
         self.lb_var.set(value=self.current_word_name_list)
 
     def delete_word(self):
-        self.main_gui.database.DeleteWord(self.current_word_name_list[self.lb.curselection()[0]])
+        word = self.current_word_name_list[self.lb.curselection()[0]]
+
+        msg_box = messagebox.askquestion('Delete word?', f"Are you sure you want to delete '{word}'",
+                                        icon='warning')
+
+        if msg_box == 'no':
+            return
+
+        self.main_gui.database.DeleteWord(word)
         self.update_words()
 
     def edit_word(self, word=None):

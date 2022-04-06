@@ -37,7 +37,7 @@ class MainGui(MainGuiTranslation):
         Label(self.left, text="Text in").pack(fill=X, expand=1)
         self.left_text = Frame(self.left)
         self.left_text.pack(fill=X, expand=1)
-        self.text_in = TextWithPlaceholder(self.left_text, placeholder="Type text to be translated here...",
+        self.text_in = TextWithPlaceholder(self.left_text, placeholder="Type text to be translated here",
                                            width=40, height=15)
         self.text_in.pack(side=LEFT, fill=X, expand=1)
         sbl = Scrollbar(self.left_text, command=self.text_in.yview)

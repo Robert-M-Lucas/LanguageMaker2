@@ -2,6 +2,8 @@
 
 from PIL import Image
 
+print("Prebuild")
+
 img = Image.open("BuildUtil/icon.png")
 img.save('BuildUtil/icon.ico', format='ICO')# , sizes=[(16, 16), (32, 32), (48, 48), (64, 64), (128, 128)])
 

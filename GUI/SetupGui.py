@@ -1,6 +1,7 @@
 from nltk_util import download
 from tkinter import messagebox
 import os
+import shutil
 
 # import tkinter as tk
 # from tkinter.constants import *
@@ -69,9 +70,8 @@ class SetupGui:
             b.focus_set()
             b.pack(fill=X)
 
-
-
             Button(self.root, text="Delete this language", command=self.delete_lang).pack(fill=X)
+            Button(self.root, text="Duplicate this language", command=self.duplicate_lang).pack(fill=X)
 
         Button(self.root, text="Create new language", command=self.create_lang).pack(fill=X)
 
@@ -91,12 +91,36 @@ class SetupGui:
         db_files = [f.split(".")[0] for f in os.listdir("Data") if os.path.isfile(os.path.join("Data", f))]
         for db in db_files:
             if db.upper() == lang.upper():
-                self.error_label.config(text="Language already exists")
+                messagebox.showerror(f"Language creation error", f"Language '{lang}' already exists")
                 return
         self.start_main_gui(lang)
 
     def get_lang_from_select(self):
         self.start_main_gui(self.lang_selected.get())
+
+    def duplicate_lang(self):
+        lang = self.lang_selected.get()
+        InputPopup(self.master, lambda x: self.duplicate_lang_confirm(lang, x), f"Enter language name for '{lang}' duplicate", lang)
+
+    def duplicate_lang_confirm(self, lang, new_lang):
+        for c in new_lang:
+            if c.upper() not in utils.ALLOWED_LANG_CHARS:
+                messagebox.showerror("Language duplication error", f"Language name contained illegal character '{c}'")
+                return
+
+        db_files = [f.split(".")[0] for f in os.listdir("Data") if os.path.isfile(os.path.join("Data", f))]
+        for db in db_files:
+            if db.upper() == new_lang.upper():
+                messagebox.showerror(f"Language duplication error", f"Language '{new_lang}' already exists")
+                return
+
+        try:
+            shutil.copy(f"Data/{lang}.db", f"Data/{new_lang}.db")
+            messagebox.showinfo("Success", f"Language '{lang}' duplicated")
+            self.reload_gui()
+        except Exception as e:
+            messagebox.showerror("Language duplication error", f"Error: {e}")
+            self.reload_gui()
 
     def delete_lang(self):
         lang = self.lang_selected.get()
@@ -106,8 +130,8 @@ class SetupGui:
         if self.lang_selected.get() == lang:
             try:
                 os.remove(f"Data/{lang}.db")
-                self.reload_gui()
                 messagebox.showinfo("Success", f"Language '{lang}' deleted")
+                self.reload_gui()
             except Exception as e:
                 messagebox.showerror("Language deletion error", f"Error: {e}")
                 self.reload_gui()

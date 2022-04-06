@@ -7,3 +7,6 @@ To add a synonym, either type a word into the textbox or select one from the lef
 click 'Add'
 
 To delete a synonym, select one from the left list and click 'delete'
+
+You will be prompted if the synonym isn't an English word or isn't a word in your custom
+language
