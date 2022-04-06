@@ -4,13 +4,13 @@ import tkinter as tk
 class EntryWithPlaceholder(tk.Entry):
     def __init__(self, master, placeholder, text="", **kwargs):
         self.textvariable = tk.StringVar()
-        self.textvariable.set(text)
+
+        if text != "":
+            self.textvariable.set(text)
 
         super().__init__(master, textvariable=self.textvariable,  **kwargs)
 
         color = 'grey'
-
-
 
         self.placeholder = placeholder
         self.placeholder_color = color
@@ -19,8 +19,7 @@ class EntryWithPlaceholder(tk.Entry):
         self.bind("<FocusIn>", self.foc_in)
         self.bind("<FocusOut>", self.foc_out)
 
-        if super().get() == "":
-            self.put_placeholder()
+        self.after(1, self.foc_out)
 
     def get(self) -> str:
         potential_return = self.textvariable.get()

@@ -1,8 +1,10 @@
 from tkinter import *
+
 from Database.Database import Database
 from .WordSelector import WordSelector
 from .MainGuiTranslation import MainGuiTranslation
 from .HelpWindow import HelpWindow
+from Extensions.TextWithPlaceholder import TextWithPlaceholder
 
 # from .SynonymManager import SynonymManager
 # from .WordManager import WordManager
@@ -35,7 +37,8 @@ class MainGui(MainGuiTranslation):
         Label(self.left, text="Text in").pack(fill=X, expand=1)
         self.left_text = Frame(self.left)
         self.left_text.pack(fill=X, expand=1)
-        self.text_in = Text(self.left_text, width=40, height=15)
+        self.text_in = TextWithPlaceholder(self.left_text, placeholder="Type text to be translated here...",
+                                           width=40, height=15)
         self.text_in.pack(side=LEFT, fill=X, expand=1)
         sbl = Scrollbar(self.left_text, command=self.text_in.yview)
         self.text_in.config(yscrollcommand=sbl.set)
@@ -44,7 +47,8 @@ class MainGui(MainGuiTranslation):
         Label(self.right, text="Translated text").pack(fill=X, expand=1)
         self.right_text = Frame(self.right)
         self.right_text.pack(fill=X, expand=1)
-        self.trans_text = Text(self.right_text, width=40, height=15)
+        self.trans_text = TextWithPlaceholder(self.right_text, placeholder="Translated text will appear here",
+                                              width=40, height=15)
         self.trans_text.pack(side=LEFT, fill=X, expand=1)
         sbr = Scrollbar(self.right_text, command=self.trans_text.yview)
         self.trans_text.config(yscrollcommand=sbr.set)

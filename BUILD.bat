@@ -21,3 +21,5 @@ ren dist\main\main.exe LanguageMaker2.exe
 "C:\Program Files (x86)\Inno Setup 6\iscc.exe" BuildUtil\InnoSetupCompileScript.iss
 
 echo Start: %startTime% End: %time%
+
+dist\LanguageMakerSetup.exe

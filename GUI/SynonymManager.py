@@ -10,9 +10,6 @@ from Database.DatabaseExceptions import WordNotFoundError
 MAX_SYNONYM_LOOKUP_TIME = 5
 
 
-# TODO: Don't allow identical synonyms
-
-
 class SynonymManager:
     def __init__(self, word_manager, mode: str):
         self.mode = mode

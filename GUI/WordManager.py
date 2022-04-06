@@ -4,6 +4,7 @@ from tkinter import messagebox
 from .SynonymManager import SynonymManager
 from .HelpWindow import HelpWindow
 from Extensions.EntryWithPlaceholder import EntryWithPlaceholder
+from Extensions.TextWithPlaceholder import TextWithPlaceholder
 
 from Translator import PUNCTUATION
 
@@ -50,7 +51,7 @@ class WordManager:
         self.desc_frm = Frame(self.right)
         self.desc_frm.pack(fill=X, expand=1)
 
-        self.desc_text = Text(self.desc_frm, height=8, width=40)
+        self.desc_text = TextWithPlaceholder(self.desc_frm, placeholder="Enter description here", height=8, width=40)
         self.desc_text.insert(END, self.word.description)
         self.desc_text.pack(side=LEFT, fill=BOTH)
         sb = Scrollbar(self.desc_frm, command=self.desc_text.yview)
