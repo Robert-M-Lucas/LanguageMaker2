@@ -27,9 +27,14 @@ class WordSelector:
         self.search_entry.grid(row=0, column=0)
         Button(self.entry_frame, text="🔎", command=self.search).grid(row=0, column=1)
 
+        self.lbf = Frame(self.top)
+        self.lbf.pack(fill=BOTH, expand=1)
         self.lb_var = StringVar(value=self.current_word_name_list)
-        self.lb = Listbox(self.top, listvariable=self.lb_var)
-        self.lb.pack(fill=X)
+        self.lb = Listbox(self.lbf, listvariable=self.lb_var)
+        self.lb.pack(fill=X, side=LEFT)
+        sb = Scrollbar(self.lbf, command=self.lb.yview)
+        sb.pack(fill=Y, expand=1)
+        self.lb.config(yscrollcommand=sb.set)
 
         Button(self.top, text="Edit selected word", command=self.edit_word).pack(fill=X)
         Button(self.top, text="Delete selected word", command=self.delete_word).pack(fill=X)

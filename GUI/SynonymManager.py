@@ -6,8 +6,9 @@ import time
 
 from .HelpWindow import HelpWindow
 from Database.DatabaseExceptions import WordNotFoundError
+from logger import *
 
-MAX_SYNONYM_LOOKUP_TIME = 5
+MAX_SYNONYM_LOOKUP_TIME = 3
 
 
 class SynonymManager:
@@ -109,6 +110,7 @@ class SynonymManager:
         self.curr_synonyms.set(self.syn_list)
 
     def update_synonyms(self):
+        SynManagerLog("Updating synonym predictions")
         synonyms_dict = {}
 
         if self.mode == "":
@@ -116,7 +118,8 @@ class SynonymManager:
 
             for curr_syn in self.syn_list:
                 if time.time() - start_time > MAX_SYNONYM_LOOKUP_TIME:
-                    print("Synonym lookup time exceeded max lookup time")
+                    SynManagerLog(f"Synonym lookup time exceeded max lookup time ({MAX_SYNONYM_LOOKUP_TIME}s) ("
+                                  f"English lookup)", 1)
                     break
 
                 synonyms = wordnet.synsets(curr_syn)
@@ -136,7 +139,8 @@ class SynonymManager:
             words = self.word_manager.main_gui.database.BackSearchLangSyn(self.word_manager.word.name)
             for wl in words:
                 if time.time() - start_time > MAX_SYNONYM_LOOKUP_TIME:
-                    print("Synonym lookup time exceeded max lookup time")
+                    SynManagerLog(f"Synonym lookup time exceeded max lookup time ({MAX_SYNONYM_LOOKUP_TIME}s) ("
+                                  f"Database Lookup)", 1)
                     break
 
                 if wl not in synonyms_dict.keys():
@@ -146,7 +150,8 @@ class SynonymManager:
 
             for i in self.syn_list:
                 if time.time() - start_time > MAX_SYNONYM_LOOKUP_TIME:
-                    print("Synonym lookup time exceeded max lookup time")
+                    SynManagerLog(f"Synonym lookup time exceeded max lookup time ({MAX_SYNONYM_LOOKUP_TIME}s) ("
+                                  f"Database Lookup)", 1)
                     break
 
                 words = self.word_manager.main_gui.database.BackSearchLangSyn(i)

@@ -5,6 +5,7 @@ from os.path import isfile, join
 
 from .Word import Word
 from .DatabaseExceptions import WordNotFoundError, WordAlreadyExistsError, WordNameChangeReferenceError
+from logger import *
 
 
 def GetLanguageList() -> List[str]:
@@ -15,6 +16,8 @@ class Database:
     def __init__(self, language: str):
         self.con = sqlite3.connect("Data/" + language + ".db")
         self.cur = self.con.cursor()
+
+        DatabaseLog("Database connected")
 
         self.cur.execute('''CREATE TABLE IF NOT EXISTS Words
                          (WordName TEXT PRIMARY KEY NOT NULL, 
@@ -36,9 +39,11 @@ class Database:
 
         self.con.commit()
 
+        DatabaseLog("Tables created")
+
     def AddWord(self, word_name: str, phonetic_eng: str = "", description: str = "", lang_synonyms: List[str] = (),
                 eng_synonyms: List[str] = ()):
-        print(f"\nCreating word: {word_name}")
+        DatabaseLog(f"Creating word '{word_name}'")
 
         self.cur.execute('INSERT INTO Words VALUES (?, ?, ?)',
                          (word_name, phonetic_eng, description))
@@ -55,6 +60,9 @@ class Database:
 
     def UpdateWordDB(self, word_name: str, phonetic_eng: str = "", description: str = "", lang_synonyms: List[str] = "",
                      eng_synonyms: List[str] = ""):
+
+        DatabaseLog(f"Updating word data for '{word_name}'")
+
         self.cur.execute('''UPDATE Words Set PhoneticEng = ?,
                           Description = ?
                           WHERE WordName = ?''',
@@ -99,6 +107,8 @@ class Database:
         self.con.commit()
 
     def ChangeWordName(self, old_name: str, new_name: str):
+        DatabaseLog(f"Changing word name '{old_name}' to '{new_name}'")
+
         try:
             self.GetWord(new_name)
             raise WordAlreadyExistsError
@@ -119,25 +129,26 @@ class Database:
 
         self.con.commit()
 
-        raise WordNameChangeReferenceError
+        if integrity_error:
+            DatabaseLog(f"Integrity error when changing word name", 2)
+            raise WordNameChangeReferenceError
 
     def UpdateWord(self, word: Word):
-        print(f"\nUpdating word:\n{word}")
+        DatabaseLog(f"Updating word '{word.name}'")
 
         if word.new_name != word.name:
             self.ChangeWordName(word.name, word.new_name)
+            word.name = word.new_name
             self.UpdateWordDB(word.new_name, word.phonetic_eng, word.description, word.lang_synonyms, word.eng_synonyms)
         else:
             self.UpdateWordDB(word.name, word.phonetic_eng, word.description, word.lang_synonyms, word.eng_synonyms)
 
     def DeleteWord(self, word_name: str):
-        print(f"Updating word: {word_name}")
+        DatabaseLog(f"Deleting word '{word_name}'")
         self.cur.execute('DELETE FROM Words WHERE WordName=:word', {"word": word_name})
         self.cur.execute('DELETE FROM WordSynEng WHERE WordName=:word', {"word": word_name})
         self.cur.execute('DELETE FROM WordSynLang WHERE WordName=:word', {"word": word_name})
-        print(f"Done")
         self.con.commit()
-        print(f"Committed")
 
     def GetWord(self, word_name: str) -> Word:
         self.cur.execute('SELECT * FROM Words WHERE WordName=:word', {"word": word_name})

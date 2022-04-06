@@ -2,9 +2,10 @@ import markdown
 import os
 import shutil
 
+from logger import *
 
 def compile_cache():
-    print("Cache not created, creating now")
+    Log("CACHE", "Caching now")
 
     try:
         shutil.rmtree("CACHE")
@@ -25,6 +26,8 @@ def compile_cache():
         with open(f"HelpText/{f}", "r") as rf:
             with open(f"CACHE/CompiledHelpText/{f}.html", "w+") as html:
                 html.write(markdown.markdown(rf.read()))
+
+    Log("CACHE", "Caching done")
 
 
 def setup():

@@ -2,6 +2,7 @@ from nltk_util import download
 from tkinter import messagebox
 import os
 import shutil
+from sys import exit
 
 # import tkinter as tk
 # from tkinter.constants import *
