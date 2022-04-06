@@ -7,6 +7,9 @@ from .HelpWindow import HelpWindow
 
 MAX_SYNONYM_LOOKUP_TIME = 5
 
+# TODO: Don't allow identical synonyms
+
+
 class SynonymManager:
     def __init__(self, word_manager, mode: str):
         self.mode = mode
@@ -31,18 +34,28 @@ class SynonymManager:
 
         # LEFT
         Label(self.left, text="Current Synonyms").pack(fill=X)
+        self.lblf = Frame(self.left)
+        self.lblf.pack(fill=BOTH, expand=1)
         self.curr_synonyms = StringVar(self.top, value=self.syn_list)
-        self.curr_lb = Listbox(self.left, listvariable=self.curr_synonyms)
-        self.curr_lb.pack(fill=X)
+        self.curr_lb = Listbox(self.lblf, listvariable=self.curr_synonyms)
+        self.curr_lb.pack(side=LEFT, fill=X)
+        sbl = Scrollbar(self.lblf, command=self.curr_lb.yview)
+        sbl.pack(fill=Y, expand=1)
+        self.curr_lb.config(yscrollcommand=sbl.set)
         Button(self.left, text="Delete", command=self.delete).pack(fill=X)
 
         # RIGHT
         Label(self.right, text="Suggested Synonyms").pack(fill=X)
         self.suggested_list = []
         self.suggested = StringVar(self.top)
-        self.sugg_lb = Listbox(self.right, listvariable=self.suggested)
-        self.sugg_lb.pack(fill=X)
+        self.lbrf = Frame(self.right)
+        self.lbrf.pack(fill=BOTH, expand=1)
+        self.sugg_lb = Listbox(self.lbrf, listvariable=self.suggested)
+        self.sugg_lb.pack(side=LEFT, fill=X)
         self.sugg_lb.bind('<<ListboxSelect>>', self.select)
+        sbr = Scrollbar(self.lbrf, command=self.sugg_lb.yview)
+        sbr.pack(fill=Y, expand=1)
+        self.sugg_lb.config(yscrollcommand=sbr.set)
 
         self.entry_frame = Frame(self.right)
         self.entry_frame.pack(fill=X)
