@@ -35,12 +35,12 @@ class SynonymManager:
 
         # LEFT
         Label(self.left, text="Current Synonyms").pack(fill=X)
-        self.lblf = Frame(self.left)
-        self.lblf.pack(fill=BOTH, expand=1)
+        self.lb_l_f = Frame(self.left)
+        self.lb_l_f.pack(fill=BOTH, expand=1)
         self.curr_synonyms = StringVar(self.top, value=self.syn_list)
-        self.curr_lb = Listbox(self.lblf, listvariable=self.curr_synonyms)
+        self.curr_lb = Listbox(self.lb_l_f, listvariable=self.curr_synonyms)
         self.curr_lb.pack(side=LEFT, fill=X)
-        sbl = Scrollbar(self.lblf, command=self.curr_lb.yview)
+        sbl = Scrollbar(self.lb_l_f, command=self.curr_lb.yview)
         sbl.pack(fill=Y, expand=1)
         self.curr_lb.config(yscrollcommand=sbl.set)
         Button(self.left, text="Delete", command=self.delete).pack(fill=X)
@@ -49,14 +49,14 @@ class SynonymManager:
         Label(self.right, text="Suggested Synonyms").pack(fill=X)
         self.suggested_list = []
         self.suggested = StringVar(self.top)
-        self.lbrf = Frame(self.right)
-        self.lbrf.pack(fill=BOTH, expand=1)
-        self.sugg_lb = Listbox(self.lbrf, listvariable=self.suggested)
-        self.sugg_lb.pack(side=LEFT, fill=X)
-        self.sugg_lb.bind('<<ListboxSelect>>', self.select)
-        sbr = Scrollbar(self.lbrf, command=self.sugg_lb.yview)
+        self.lb_r_f = Frame(self.right)
+        self.lb_r_f.pack(fill=BOTH, expand=1)
+        self.suggestion_lb = Listbox(self.lb_r_f, listvariable=self.suggested)
+        self.suggestion_lb.pack(side=LEFT, fill=X)
+        self.suggestion_lb.bind('<<ListboxSelect>>', self.select)
+        sbr = Scrollbar(self.lb_r_f, command=self.suggestion_lb.yview)
         sbr.pack(fill=Y, expand=1)
-        self.sugg_lb.config(yscrollcommand=sbr.set)
+        self.suggestion_lb.config(yscrollcommand=sbr.set)
 
         self.entry_frame = Frame(self.right)
         self.entry_frame.pack(fill=X)
@@ -67,7 +67,7 @@ class SynonymManager:
         self.update_synonyms()
 
     def select(self, *args):
-        self.new_syn.set(self.suggested_list[self.sugg_lb.curselection()[0]])
+        self.new_syn.set(self.suggested_list[self.suggestion_lb.curselection()[0]])
 
     def delete(self):
         self.syn_list.pop(self.curr_lb.curselection()[0])
@@ -82,21 +82,19 @@ class SynonymManager:
             return
 
         if self.mode == "" and new_syn not in wordnet.words("eng"):
-            MsgBox = messagebox.askquestion('Word not english', f"Synonym '{new_syn}' not english. Add anyway?",
-                                            icon='warning')
-
-            if MsgBox == 'no':
+            msg_box = messagebox.askquestion('Word not english', f"Synonym '{new_syn}' not english. Add anyway?",
+                                             icon='warning')
+            if msg_box == 'no':
                 return
 
         if self.mode != "":
             try:
                 self.word_manager.main_gui.database.GetWord(new_syn)
             except WordNotFoundError:
-                MsgBox = messagebox.askquestion(f"Word not in '{self.mode}'",
-                                                f"Synonym '{new_syn}' not in language '{self.mode}'. Add anyway?",
-                                                icon='warning')
-
-                if MsgBox == 'no':
+                msg_box = messagebox.askquestion(f"Word not in '{self.mode}'",
+                                                 f"Synonym '{new_syn}' not in language '{self.mode}'. Add anyway?",
+                                                 icon='warning')
+                if msg_box == 'no':
                     return
 
         self.add_syn(new_syn)

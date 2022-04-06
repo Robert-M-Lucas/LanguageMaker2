@@ -2,10 +2,10 @@
 
 from PIL import Image
 
-print("Prebuild")
+print("Pre-build")
 
 img = Image.open("BuildUtil/icon.png")
-img.save('BuildUtil/icon.ico', format='ICO')# , sizes=[(16, 16), (32, 32), (48, 48), (64, 64), (128, 128)])
+img.save('BuildUtil/icon.ico', format='ICO')  # , sizes=[(16, 16), (32, 32), (48, 48), (64, 64), (128, 128)])
 
 with open("VERSION.txt", "r") as f:
     version = f.read()

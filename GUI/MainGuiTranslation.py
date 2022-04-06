@@ -62,7 +62,6 @@ class MainGuiTranslation:
         # except DatabaseExceptions.WordNotFoundError:
         #     wordExists = False
 
-
         if len(step.translation_options) > 0:
             Label(self.trans_top_root, text=f"Translation for {step.source_word}").pack(fill=X)
 

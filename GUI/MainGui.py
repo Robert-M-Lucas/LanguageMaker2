@@ -6,6 +6,7 @@ from .MainGuiTranslation import MainGuiTranslation
 from .HelpWindow import HelpWindow
 from Extensions.TextWithPlaceholder import TextWithPlaceholder
 
+
 # from .SynonymManager import SynonymManager
 # from .WordManager import WordManager
 # from Translator import TranslateAll, Translator, TranslationStep
@@ -29,9 +30,9 @@ class MainGui(MainGuiTranslation):
         self.mid_frame.pack(fill=X, expand=1)
 
         self.left = Frame(self.mid_frame)
-        self.left.grid(row=0, column=0, sticky=N+E+S+W)
+        self.left.grid(row=0, column=0, sticky=N + E + S + W)
         self.right = Frame(self.mid_frame)
-        self.right.grid(row=0, column=1, sticky=N+E+S+W)
+        self.right.grid(row=0, column=1, sticky=N + E + S + W)
 
         Button(self.left, text="Word Manager", command=lambda: WordSelector(self, lang)).pack(fill=X, expand=1)
         Label(self.left, text="Text in").pack(fill=X, expand=1)
@@ -61,10 +62,10 @@ class MainGui(MainGuiTranslation):
         self.left_bottom.columnconfigure(0, weight=1)
         self.left_bottom.columnconfigure(1, weight=1)
 
-        Button(self.left_bottom, text=f"'{lang}' to English", command=lambda: self.translate(True))\
-            .grid(row=0, column=0, sticky=N+E+S+W)
+        Button(self.left_bottom, text=f"'{lang}' to English", command=lambda: self.translate(True)) \
+            .grid(row=0, column=0, sticky=N + E + S + W)
         Button(self.left_bottom, text=f"'{lang}' to English Phonetic", command=self.translate_phonetic) \
-            .grid(row=0, column=1, sticky=N+E+S+W)
+            .grid(row=0, column=1, sticky=N + E + S + W)
 
         self.right_bottom = Frame(self.right)
         self.right_bottom.pack(fill=X, expand=1)

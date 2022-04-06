@@ -76,7 +76,7 @@ class WordSelector:
         word = self.current_word_name_list[self.lb.curselection()[0]]
 
         msg_box = messagebox.askquestion('Delete word?', f"Are you sure you want to delete '{word}'",
-                                        icon='warning')
+                                         icon='warning')
 
         if msg_box == 'no':
             return
