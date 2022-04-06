@@ -14,7 +14,7 @@ You will have to heavily modify build files to make them work on your machine. T
 will need pyinstaller and Inno Setup Compiler.
 
 Building this app with pyinstaller (see BUILD.bat) requires the dev version which can be
-installed with
+installed with.
 
 ```pip install https://github.com/pyinstaller/pyinstaller/archive/develop.zip```
 
