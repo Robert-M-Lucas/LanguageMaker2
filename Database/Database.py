@@ -17,7 +17,7 @@ class Database:
         self.con = sqlite3.connect("Data/" + language + ".db")
         self.cur = self.con.cursor()
 
-        DatabaseLog("Database connected")
+        DatabaseLog(f"Database connected to {'Data/' + language + '.db'}")
 
         self.cur.execute('''CREATE TABLE IF NOT EXISTS Words
                          (WordName TEXT PRIMARY KEY NOT NULL, 

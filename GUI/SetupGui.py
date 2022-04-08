@@ -17,6 +17,7 @@ from .HelpWindow import HelpWindow
 
 from Database.Database import GetLanguageList
 import utils
+from logger import *
 
 
 class SetupGui:
@@ -45,6 +46,8 @@ class SetupGui:
         self.reload_gui()
 
     def reload_gui(self):
+        Log("SetupGui", "Reloading")
+
         if self.root is not None:
             self.root.destroy()
         self.root = Frame(self.master)
@@ -109,20 +112,24 @@ class SetupGui:
     def duplicate_lang_confirm(self, lang, new_lang):
         for c in new_lang:
             if c.upper() not in utils.ALLOWED_LANG_CHARS:
+                DatabaseLog(f"Language duplication error: Language name contained illegal character '{c}'", 2)
                 messagebox.showerror("Language duplication error", f"Language name contained illegal character '{c}'")
                 return
 
         db_files = [f.split(".")[0] for f in os.listdir("Data") if os.path.isfile(os.path.join("Data", f))]
         for db in db_files:
             if db.upper() == new_lang.upper():
+                DatabaseLog(f"Language duplication error: Language '{new_lang}' already exists", 2)
                 messagebox.showerror(f"Language duplication error", f"Language '{new_lang}' already exists")
                 return
 
         try:
             shutil.copy(f"Data/{lang}.db", f"Data/{new_lang}.db")
+            DatabaseLog(f"Language '{lang}' duplicated (New name: '{new_lang}')")
             messagebox.showinfo("Success", f"Language '{lang}' duplicated")
             self.reload_gui()
         except Exception as e:
+            DatabaseLog(f"Language duplication error: {e}")
             messagebox.showerror("Language duplication error", f"Error: {e}")
             self.reload_gui()
 
@@ -135,9 +142,11 @@ class SetupGui:
             try:
                 os.remove(f"Data/{lang}.db")
                 messagebox.showinfo("Success", f"Language '{lang}' deleted")
+                DatabaseLog(f"Database '{lang}' deleted")
                 self.reload_gui()
             except Exception as e:
                 messagebox.showerror("Language deletion error", f"Error: {e}")
+                DatabaseLog(f"Language '{lang}' deletion error: {e}", 2)
                 self.reload_gui()
         else:
             messagebox.showerror("Failed", f"Language '{self.lang_selected.get()}' did not match entry '{lang}'")
