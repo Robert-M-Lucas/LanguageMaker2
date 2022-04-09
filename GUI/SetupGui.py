@@ -26,7 +26,7 @@ class SetupGui:
         self.has_nltk = has_nltk
         self.master = Tk()
         self.master.title("Pick a language")
-        self.master.protocol("WM_DELETE_WINDOW", exit)
+        self.master.protocol("WM_DELETE_WINDOW", utils.exit)
 
         # style = Style(self.master)
         # style.theme_use("vista")
@@ -46,7 +46,7 @@ class SetupGui:
         self.reload_gui()
 
     def reload_gui(self):
-        Log("SetupGui", "Reloading")
+        Log("SETUP", "Reloading")
 
         if self.root is not None:
             self.root.destroy()
@@ -159,4 +159,4 @@ class SetupGui:
         self.master.destroy()
         MainGui(lang, self)
         if self.exit:
-            exit(0)
+            utils.exit()
