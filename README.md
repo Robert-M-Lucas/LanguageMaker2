@@ -1,6 +1,6 @@
-### This project is marked as complete
-# Language maker 2
+### This project is marked as complete however may receive support for languages other than English
 
+# Language maker 2
 This is an updated version of a previous language maker to track my improvement in python
 programming.
 
