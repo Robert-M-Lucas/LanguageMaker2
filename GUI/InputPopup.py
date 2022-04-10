@@ -11,6 +11,7 @@ class InputPopup:
         self.callback_args = callback_args
 
         self.top = Toplevel(master)
+        self.top.resizable(False, False)
         if blocking:
             self.top.grab_set()
 

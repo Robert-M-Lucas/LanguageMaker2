@@ -27,7 +27,7 @@ level_text = {
     2: "ERROR"
 }
 
-MAX_ID_LEN = 8  # +1
+MAX_ID_LEN = 9  # +1
 MAX_LEVEL_LEN = 6  # *2 +1
 
 

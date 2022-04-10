@@ -26,6 +26,7 @@ class SetupGui:
         self.master = Tk()
         self.master.title("Pick a language")
         self.master.protocol("WM_DELETE_WINDOW", utils.exit)
+        self.master.resizable(False, False)
 
         # style = Style(self.master)
         # style.theme_use("vista")

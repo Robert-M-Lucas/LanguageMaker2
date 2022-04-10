@@ -4,6 +4,7 @@ import shutil
 
 from logger import *
 
+
 def compile_cache():
     Log("CACHE", "Caching now")
 
@@ -31,6 +32,7 @@ def compile_cache():
 
 
 def setup():
+    Log("SETUP", "Checking if cache is up to date")
     if not os.path.exists("CACHE"):
         compile_cache()
     elif not os.path.exists("CACHE/CACHE_VERSION.txt"):

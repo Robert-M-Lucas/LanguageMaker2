@@ -151,6 +151,7 @@ class Database:
         self.con.commit()
 
     def GetWord(self, word_name: str) -> Word:
+        DatabaseLog(f"Getting word data for '{word_name}'")
         self.cur.execute('SELECT * FROM Words WHERE WordName=:word', {"word": word_name})
         word_out = self.cur.fetchall()
 
@@ -166,12 +167,14 @@ class Database:
         return Word(word_out[0], eng_syn_out, lang_syn_out)
 
     def GetAllWordNames(self) -> List[str]:
+        DatabaseLog("Getting all word names")
         self.cur.execute('SELECT WordName FROM Words')
         out = self.cur.fetchall()
 
         return [n[0] for n in out]
 
     def GetAllWords(self) -> List[Word]:
+        DatabaseLog("Getting all word data - This is usually slow and should be avoided", 1)
         self.cur.execute('SELECT * FROM Words')
         out = self.cur.fetchall()
 
@@ -188,16 +191,19 @@ class Database:
         return word_list
 
     def GetLangTrans(self, eng_word: str) -> List[str]:
+        DatabaseLog(f"Getting lang translation for '{eng_word}'")
         self.cur.execute('SELECT WordName FROM WordSynEng WHERE EngSyn = ?', (eng_word,))
         out = self.cur.fetchall()
         return [o[0] for o in out]
 
     def BackSearchLangSyn(self, lang_syn: str):
+        DatabaseLog(f"Getting lang synonyms for '{lang_syn}'")
         self.cur.execute('SELECT WordName FROM WordSynLang WHERE LangSyn = ?', (lang_syn,))
         out = self.cur.fetchall()
         return [o[0] for o in out]
 
     def GetEngTrans(self, lang_word: str) -> List[str]:
+        DatabaseLog(f"Getting English translation for '{lang_word}'")
         self.cur.execute('SELECT EngSyn FROM WordSynEng WHERE WordName = ?', (lang_word,))
         out = self.cur.fetchall()
         return [o[0] for o in out]

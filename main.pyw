@@ -7,9 +7,9 @@ from logger import *
 try:
     from ctypes import windll
     windll.shcore.SetProcessDpiAwareness(1)
-    Log("RESFIX", "Resolution fix applied")
+    Log("SETUP", "Resolution fix applied")
 except Exception as e:
-    Log("RESFIX", f"Resolution fix failed with {type(e).__name__}: {e}", 2)
+    Log("SETUP", f"Resolution fix failed with {type(e).__name__}: {e}", 2)
 
 # NLTK Imports
 has_nltk = True

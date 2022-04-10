@@ -3,5 +3,6 @@ from logger import *
 
 
 def download():
-    Log("NLTK", "Downloading nltk")
+    Log("NLTK", "Downloading wordnet and omw-1.4")
     dload('wordnet')
+    dload('omw-1.4')

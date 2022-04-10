@@ -9,8 +9,6 @@ attrib +h build
 
 del dist\main\nltk_data\corpora\omw-1.4.zip
 del dist\main\nltk_data\corpora\wordnet.zip
-del dist\main\nltk_data\corpora\omw-1.4\*.* /q /s
-del dist\main\nltk_data\corpora\omw-1.4 /q /s
 
 copy VERSION.txt dist\main\VERSION.txt
 Xcopy HelpText dist\main\HelpText\ /E /H /C /I

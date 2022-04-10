@@ -22,6 +22,7 @@ class WordManager:
         self.top.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.top.grab_set()
         self.top.title(f"Word Manager for {word_name}")
+        self.top.resizable(False, False)
 
         HelpWindow(self.top, "WordManager")
 

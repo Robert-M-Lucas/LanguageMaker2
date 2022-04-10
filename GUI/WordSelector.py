@@ -18,6 +18,7 @@ class WordSelector:
         self.top.grab_set()
         self.default_title = "Word Selector"
         self.top.title(self.default_title)
+        self.top.resizable(False, False)
 
         HelpWindow(self.top, "WordSelector")
 

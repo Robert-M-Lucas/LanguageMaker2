@@ -25,6 +25,7 @@ class SynonymManager:
         self.top = Toplevel(word_manager.top)
         self.top.grab_set()
         self.top.title(window_name)
+        self.top.resizable(False, False)
 
         HelpWindow(self.top, "SynonymManager")
 
