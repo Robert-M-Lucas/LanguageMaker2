@@ -2,6 +2,7 @@ from tkinter import *
 from tkhtmlview import HTMLLabel
 import os
 
+from logger import *
 from utils import ROOT_DIR
 
 
@@ -18,6 +19,8 @@ class HelpWindow:
         height = top.winfo_screenheight()
         top.geometry(f'{int(width/3)}x{int(height/2)}+{int((width/3)*2)}+0')
         top.title(self.filename)
+
+        Log("HELPGUI", f"Loading help from: 'CACHE/CompiledHelpText/{self.filename}.md.html'")
 
         with open(f"CACHE/CompiledHelpText/{self.filename}.md.html", "r") as f:
             frame = HTMLLabel(top, html=f.read())

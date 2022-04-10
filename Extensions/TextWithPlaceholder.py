@@ -23,7 +23,7 @@ class TextWithPlaceholder(Text):
 
     def insert(self, *args) -> None:
         if self.placeholder_in:
-            self.delete('1.0', END)
+            self.remove_placeholder()
         super().insert(*args)
 
     def place_placeholder(self):

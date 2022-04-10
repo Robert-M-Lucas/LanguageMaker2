@@ -1,6 +1,7 @@
 from Database.Database import Database
 from Database.Word import Word
 from Database.DatabaseExceptions import WordNotFoundError
+from logger import *
 
 from dataclasses import dataclass
 from typing import List
@@ -166,6 +167,7 @@ class TranslationStep:
 
 class Translator:
     def __init__(self, text_in: str, db: Database, mode: bool):
+        Log("TRNSLT", "Pre-processing translation")
         if len(text_in) == 0:
             text_in = "\n"
 
@@ -202,6 +204,8 @@ class Translator:
             self.index_offset = 0
         self.index = 0
 
+        Log("TRNSLT", "Pre-processing translation complete")
+
     # def re_index(self):
     #     self.db_all_words = self.db.GetAllWords()
     #
@@ -230,6 +234,8 @@ class Translator:
     def step(self) -> TranslationStep | None:
         if (self.index * 2) + self.index_offset >= len(self.split_text):
             return None
+
+        Log("TRNSLT", f"Translating step {(self.index * 2) + self.index_offset + 1}/{len(self.split_text)}")
 
         w = self.split_text[(self.index * 2) + self.index_offset]
         highlight = self.highlight_regions[self.index]

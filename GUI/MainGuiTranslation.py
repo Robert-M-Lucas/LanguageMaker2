@@ -15,7 +15,7 @@ class MainGuiTranslation:
 
     def translate(self, mode: bool):
         self.trans_text.delete('1.0', END)
-        if self.deterministic.get() == 0:
+        if self.stepped.get() == 0:
             self.trans_text.insert('1.0', TranslateAll(self.text_in.get("1.0", END), self.database, mode))
         else:
             self.start_stepped_translate(mode)

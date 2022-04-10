@@ -22,10 +22,5 @@ Log("NLTK", f"Has nltk: {has_nltk}")
 
 setup.setup()
 
-
-# synonyms = wordnet.synsets("good")
-# lemmas = set(chain.from_iterable([word.lemma_names() for word in synonyms]))
-# print(lemmas)
-
 while True:
     SetupGui(has_nltk)
