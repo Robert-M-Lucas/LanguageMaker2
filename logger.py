@@ -1,4 +1,5 @@
 from datetime import datetime
+import sys
 
 
 class bcolors:
@@ -26,6 +27,9 @@ level_text = {
     2: "ERROR"
 }
 
+MAX_ID_LEN = 8  # +1
+MAX_LEVEL_LEN = 6  # *2 +1
+
 
 def DatabaseLog(content, level=0):
     Log("DATABASE", content, level)
@@ -38,5 +42,13 @@ def SynManagerLog(content, level=0):
 def Log(category, content, level=0):
     timestamp = datetime.now().strftime("%H:%M:%S")
 
-    output = f"{level_colour[level]}[{timestamp}] [{category} - {level_text[level]}]: {content}{bcolors.ENDC}"
+    id1 = category
+    id1 += (MAX_ID_LEN - len(id1)) * " "
+
+    id2 = level_text[level]
+    id2 = ((MAX_LEVEL_LEN - len(id2)) * " ") + id2
+
+    id_full = id1 + "-" + id2
+
+    output = f"[{timestamp}] {level_colour[level]}[{id_full}]: {content}{bcolors.ENDC}"
     print(output)

@@ -2,7 +2,6 @@ from nltk_util import download
 from tkinter import messagebox
 import os
 import shutil
-from sys import exit
 
 # import tkinter as tk
 # from tkinter.constants import *
@@ -106,7 +105,7 @@ class SetupGui:
 
     def duplicate_lang(self):
         lang = self.lang_selected.get()
-        InputPopup(self.master, lambda x: self.duplicate_lang_confirm(lang, x), f"Enter language name for '{lang}' "
+        InputPopup(self.master, lambda x: self.duplicate_lang_confirm(lang, x), f"Enter language name for\n'{lang}' "
                                                                                 f"duplicate", lang)
 
     def duplicate_lang_confirm(self, lang, new_lang):
