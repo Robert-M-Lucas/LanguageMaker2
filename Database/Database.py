@@ -4,34 +4,51 @@ from typing import List
 from os import listdir
 from os.path import isfile, join, isdir
 import json
+import time
 
 from .Word import Word
 from .DatabaseExceptions import WordNotFoundError, WordAlreadyExistsError, WordNameChangeReferenceError
 from logger import *
 
 
-def GetLanguageList() -> List[str]:
+def GetLanguageList() -> List[tuple]:
     DatabaseLog("Getting list of languages...")
     if not isdir("Data"):
         DatabaseLog("Directory 'Data' does not exist. Creating now", 1)
         os.mkdir("Data")
-    return [f.split(".")[0] for f in listdir("Data") if isfile(join("Data", f))]
+
+    lang_date = []
+    for f in listdir("Data"):
+        if isfile(join("Data", f)):
+            if f.split(".")[1].lower() == "db":
+                l = f.split(".")[0]
+                lang_date.append((l, DatabaseData(l).data["last_change"]))
+
+    lang_date = sorted(lang_date, key=lambda i: i[1], reverse=True)
+
+    return lang_date
 
 
 class DatabaseData:
     def __init__(self, lang, expecting_file=True):
         self.lang = lang
-        self.data = {
-            "base_lang": "eng"
+        base_data = {
+            "base_lang": "eng",
+            "last_change": 0
         }
+        self.data = base_data
 
         try:
             with open(f"Data/{lang}.dbdata", "r") as f:
                 self.data = json.loads(f.read())
+            for k in base_data.keys():
+                if k not in self.data.keys():
+                    DatabaseLog(f".dbdata file for '{lang}' missing attribute '{k}'. Setting to default value '{base_data[k]}'", 1)
+                    self.data[k] = base_data[k]
         except FileNotFoundError:
             if expecting_file:
                 DatabaseLog(f".dbdata file not found for '{lang}', creating default", 2)
-                self.save()
+        self.save()
 
     def save(self):
         with open(f"Data/{self.lang}.dbdata", "w+") as f:
@@ -42,6 +59,8 @@ class Database:
     def __init__(self, language: str):
         self.language = language
         self.dbdata = DatabaseData(language)
+        self.dbdata.data["last_change"] = time.time()
+        self.dbdata.save()
         self.con = sqlite3.connect("Data/" + language + ".db")
         self.cur = self.con.cursor()
 

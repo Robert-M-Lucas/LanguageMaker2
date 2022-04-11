@@ -5,7 +5,7 @@ from .SynonymManager import SynonymManager
 from .HelpWindow import HelpWindow
 from Extensions.EntryWithPlaceholder import EntryWithPlaceholder
 from Extensions.TextWithPlaceholder import TextWithPlaceholder
-
+from logger import *
 from Translator import PUNCTUATION
 
 

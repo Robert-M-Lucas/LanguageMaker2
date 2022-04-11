@@ -45,6 +45,7 @@ class SetupGui:
         self.root = None
         self.lang_selected = StringVar()
         self.error_label = None
+        self.lang_dates = None
 
         self.reload_gui()
 
@@ -67,7 +68,8 @@ class SetupGui:
 
         ttk.Separator(self.root, orient=HORIZONTAL).pack(fill=X, pady=(4, 0))
 
-        langs = GetLanguageList()
+        self.lang_dates = GetLanguageList()
+        langs = [i[0] for i in self.lang_dates]
 
         if len(langs) > 0:
             self.lang_selected.set(langs[0])
