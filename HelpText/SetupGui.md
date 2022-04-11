@@ -10,6 +10,8 @@ The only allowed characters in language names are alphanumerics, '-' and '_'
 
 Two languages aren't permitted to have the same name
 
+An example language 'TestLanguage' should be bundled by default
+
 ### Deleting a language
 To delete a language select it and click 'Delete this language'. A confirmation box will appear
 where you have to type the language name precisely to delete it.

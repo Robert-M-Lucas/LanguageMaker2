@@ -25,5 +25,11 @@ class HelpWindow:
         with open(f"CACHE/CompiledHelpText/{self.filename}.md.html", "r") as f:
             frame = HTMLLabel(top, html=f.read())
 
-        frame.pack(fill="both", expand=True)
+        frame.grid(sticky=N+E+S+W, row=0, column=0)
 
+        sb = Scrollbar(top, command=frame.yview)
+        frame.config(yscrollcommand=sb.set)
+        sb.grid(sticky=N+E+S+W, row=0, column=1)
+
+        Grid.columnconfigure(top, 0, weight=1)
+        Grid.rowconfigure(top, 0, weight=1)
