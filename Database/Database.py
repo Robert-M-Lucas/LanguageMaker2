@@ -19,6 +19,7 @@ def GetLanguageList() -> List[str]:
 
 class Database:
     def __init__(self, language: str):
+        self.language = language
         self.con = sqlite3.connect("Data/" + language + ".db")
         self.cur = self.con.cursor()
 

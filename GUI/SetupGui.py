@@ -18,6 +18,8 @@ from Database.Database import GetLanguageList
 import utils
 from logger import *
 
+# TODO: All file management should be done from Database.py
+
 
 class SetupGui:
     def __init__(self, has_nltk: bool):

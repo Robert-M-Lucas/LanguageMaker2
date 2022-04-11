@@ -6,6 +6,10 @@ from .InputPopup import InputPopup
 
 from Translator import TranslateAll, Translator, TranslationStep, TranslatePhonetic
 from Database import DatabaseExceptions
+from .WordSelector import WordSelector
+
+
+# TODO: Add word selector type ui for picking synonyms for English
 
 
 class MainGuiTranslation:
@@ -86,16 +90,22 @@ class MainGuiTranslation:
                    command=lambda: self.skip_stepped_word(step)).pack(fill=X)
 
         elif step.mode:
-            Label(self.trans_top_root, text=f"No synonyms for {step.source_word}").pack(fill=X)
-            Button(self.trans_top_root, text="Add synonym", command=lambda:
-            InputPopup(self.trans_top_root, self.add_syn_trans, f"Enter synonym for {step.source_word}", True, [step])
+            Label(self.trans_top_root,
+                  text=f"No English translation for\n'{self.database.language}' word '{step.source_word}'").pack(fill=X)
+            Button(self.trans_top_root, text="Add translation", command=lambda:
+            InputPopup(self.trans_top_root, self.add_syn_trans, f"Enter translation for {step.source_word}", True,
+                       [step])
                    ).pack(fill=X)
+            Button(self.trans_top_root, text=f"Skip this word",
+                   command=lambda: self.skip_stepped_word(step)).pack(fill=X)
 
         else:
-            Label(self.trans_top_root, text=f"No translation for {step.source_word}").pack(fill=X)
-            Button(self.trans_top_root, text="Add synonym", command=lambda:
-            InputPopup(self.trans_top_root, self.add_syn_trans, f"Enter synonym for {step.source_word}", True, [step])
-                   ).pack(fill=X)
+            Label(self.trans_top_root,
+                  text=f"No '{self.database.language}' translation for\nEnglish word '{step.source_word}'").pack(fill=X)
+            Button(self.trans_top_root, text="Add translation", command=lambda:
+            WordSelector(self, self.database.language, True, lambda word: self.add_syn_trans(word, step))).pack(fill=X)
+            Button(self.trans_top_root, text=f"Skip this word",
+                   command=lambda: self.skip_stepped_word(step)).pack(fill=X)
 
     def create_stepped_word(self, step: TranslationStep):
         self.database.AddWord(step.source_word)
@@ -127,7 +137,6 @@ class MainGuiTranslation:
             self.database.UpdateWord(word)
 
             self.translator.index -= 1
-            # self.translator.re_index()
 
             self.stepped_translate()
         else:
@@ -137,7 +146,6 @@ class MainGuiTranslation:
                 messagebox.showerror(f"Word '{syn}' not found", f"Word '{syn}' wasn't found, use the Word Manager to "
                                                                 f"create new words")
                 self.translator.index -= 1
-                self.translator.re_index()
                 self.stepped_translate()
                 return
 
@@ -146,6 +154,5 @@ class MainGuiTranslation:
             self.database.UpdateWord(word)
 
             self.translator.index -= 1
-            self.translator.re_index()
 
             self.stepped_translate()

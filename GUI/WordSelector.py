@@ -6,11 +6,13 @@ from .WordManager import WordManager
 from .HelpWindow import HelpWindow
 
 from Translator import PUNCTUATION
+from logger import *
 from Extensions.EntryWithPlaceholder import EntryWithPlaceholder
 
 
 class WordSelector:
-    def __init__(self, main_gui, lang):
+    def __init__(self, main_gui, lang, single_select=False, single_select_callback=None):
+        self.single_select_callback = single_select_callback
         self.lang = lang
         self.current_word_name_list = main_gui.database.GetAllWordNames()
         self.main_gui = main_gui
@@ -37,6 +39,9 @@ class WordSelector:
         sb.pack(fill=Y, expand=1)
         self.lb.config(yscrollcommand=sb.set)
 
+        if single_select:
+            Button(self.top, text="Select word", command=self.select_word).pack(fill=X)
+
         Button(self.top, text="Edit selected word", command=self.edit_word).pack(fill=X)
         Button(self.top, text="Delete selected word", command=self.delete_word).pack(fill=X)
         b = Button(self.top, text="Create new word", command=self.get_new)
@@ -46,6 +51,13 @@ class WordSelector:
     def get_new(self):
         InputPopup(self.top, self.create_word, "Enter new word name:", True)
 
+    def select_word(self, word=None):
+        if word is None:
+            word = self.current_word_name_list[self.lb.curselection()[0]]
+        self.top.destroy()
+        self.single_select_callback(word)
+
+
     def create_word(self, word_name: str):
         word_name = word_name.replace(" ", "_")
 
@@ -53,6 +65,12 @@ class WordSelector:
             if c in word_name:
                 messagebox.showerror("Illegal character in word name", "Word name cannot contain punctuation or "
                                                                        "special characters other than '_'")
+                return
+
+        for w in self.current_word_name_list:
+            if word_name == w:
+                messagebox.showerror("Word already", f"Word '{word_name}' already exists")
+                self.edit_word(word_name)
                 return
 
         self.main_gui.database.AddWord(word_name)
