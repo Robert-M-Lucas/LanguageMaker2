@@ -128,6 +128,12 @@ class SetupGui:
 
         try:
             shutil.copy(f"Data/{lang}.db", f"Data/{new_lang}.db")
+
+            try:
+                shutil.copy(f"Data/{lang}.dbdata", f"Data/{new_lang}.dbdata")
+            except FileNotFoundError:
+                DatabaseLog(f"Language '{lang}' has no dbdata file to copy", 1)
+
             DatabaseLog(f"Language '{lang}' duplicated (New name: '{new_lang}')")
             messagebox.showinfo("Success", f"Language '{lang}' duplicated")
             self.reload_gui()
@@ -144,12 +150,18 @@ class SetupGui:
         if self.lang_selected.get() == lang:
             try:
                 os.remove(f"Data/{lang}.db")
-                messagebox.showinfo("Success", f"Language '{lang}' deleted")
+
+                try:
+                    os.remove(f"Data/{lang}.dbdata")
+                except FileNotFoundError:
+                    DatabaseLog(f"Language '{lang}' has no dbdata file to delete", 1)
+
                 DatabaseLog(f"Database '{lang}' deleted")
+                messagebox.showinfo("Success", f"Language '{lang}' deleted")
                 self.reload_gui()
             except Exception as e:
-                messagebox.showerror("Language deletion error", f"Error: {e}")
                 DatabaseLog(f"Language '{lang}' deletion error: {e}", 2)
+                messagebox.showerror("Language deletion error", f"Error: {e}")
                 self.reload_gui()
         else:
             messagebox.showerror("Failed", f"Language '{self.lang_selected.get()}' did not match entry '{lang}'")

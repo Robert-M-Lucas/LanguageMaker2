@@ -3,6 +3,7 @@ import sqlite3
 from typing import List
 from os import listdir
 from os.path import isfile, join, isdir
+import json
 
 from .Word import Word
 from .DatabaseExceptions import WordNotFoundError, WordAlreadyExistsError, WordNameChangeReferenceError
@@ -17,9 +18,30 @@ def GetLanguageList() -> List[str]:
     return [f.split(".")[0] for f in listdir("Data") if isfile(join("Data", f))]
 
 
+class DatabaseData:
+    def __init__(self, lang, expecting_file=True):
+        self.lang = lang
+        self.data = {
+            "base_lang": "eng"
+        }
+
+        try:
+            with open(f"Data/{lang}.dbdata", "r") as f:
+                self.data = json.loads(f.read())
+        except FileNotFoundError:
+            if expecting_file:
+                DatabaseLog(f".dbdata file not found for '{lang}', creating default", 2)
+                self.save()
+
+    def save(self):
+        with open(f"Data/{self.lang}.dbdata", "w+") as f:
+            f.write(json.dumps(self.data))
+
+
 class Database:
     def __init__(self, language: str):
         self.language = language
+        self.dbdata = DatabaseData(language)
         self.con = sqlite3.connect("Data/" + language + ".db")
         self.cur = self.con.cursor()
 

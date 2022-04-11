@@ -9,10 +9,17 @@ from Database import DatabaseExceptions
 from .WordSelector import WordSelector
 
 
-# TODO: Add word selector type ui for picking synonyms for English
-
-
 class MainGuiTranslation:
+    def __init__(self):
+        self.trans_top = None
+        self.trans_top_root = None
+        self.master = None
+        self.translator = None
+        self.database = None
+        self.stepped = None
+        self.text_in = None
+        self.trans_text = None
+
     def translate_phonetic(self):
         self.trans_text.delete('1.0', END)
         self.trans_text.insert('1.0', TranslatePhonetic(self.text_in.get("1.0", END), self.database))
