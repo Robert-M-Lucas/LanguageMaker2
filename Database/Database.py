@@ -1,7 +1,8 @@
+import os
 import sqlite3
 from typing import List
 from os import listdir
-from os.path import isfile, join
+from os.path import isfile, join, isdir
 
 from .Word import Word
 from .DatabaseExceptions import WordNotFoundError, WordAlreadyExistsError, WordNameChangeReferenceError
@@ -9,6 +10,10 @@ from logger import *
 
 
 def GetLanguageList() -> List[str]:
+    DatabaseLog("Getting list of languages...")
+    if not isdir("Data"):
+        DatabaseLog("Directory 'Data' does not exist. Creating now", 1)
+        os.mkdir("Data")
     return [f.split(".")[0] for f in listdir("Data") if isfile(join("Data", f))]
 
 

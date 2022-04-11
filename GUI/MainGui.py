@@ -22,7 +22,7 @@ class MainGui(MainGuiTranslation):
         self.master.title(f"Language Maker 2 - '{lang}'")
         self.master.focus_force()
         self.master.resizable(False, False)
-        self.master.iconbitmap('BuildUtil/icon.ico')
+        self.master.iconbitmap('GUI/icon.ico')
         self.root = Frame(self.master)
         self.root.pack(fill=BOTH, expand=1)
 
