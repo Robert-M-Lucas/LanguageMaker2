@@ -10,25 +10,9 @@ from .Word import Word
 from .DatabaseExceptions import WordNotFoundError, WordAlreadyExistsError, WordNameChangeReferenceError
 from logger import *
 
+# TODO: Use databse table as dictionary instead of .dbdata
 
-def GetLanguageList() -> List[tuple]:
-    DatabaseLog("Getting list of languages...")
-    if not isdir("Data"):
-        DatabaseLog("Directory 'Data' does not exist. Creating now", 1)
-        os.mkdir("Data")
-
-    lang_date = []
-    for f in listdir("Data"):
-        if isfile(join("Data", f)):
-            if f.split(".")[1].lower() == "db":
-                l = f.split(".")[0]
-                lang_date.append((l, DatabaseData(l).data["last_change"]))
-
-    lang_date = sorted(lang_date, key=lambda i: i[1], reverse=True)
-
-    return lang_date
-
-
+"""
 class DatabaseData:
     def __init__(self, lang, expecting_file=True):
         self.lang = lang
@@ -53,40 +37,82 @@ class DatabaseData:
     def save(self):
         with open(f"Data/{self.lang}.dbdata", "w+") as f:
             f.write(json.dumps(self.data))
+"""
 
 
 class Database:
-    def __init__(self, language: str):
+    def __init__(self, language: str, full_init = True):
         self.language = language
-        self.dbdata = DatabaseData(language)
-        self.dbdata.data["last_change"] = time.time()
-        self.dbdata.save()
         self.con = sqlite3.connect("Data/" + language + ".db")
         self.cur = self.con.cursor()
 
         DatabaseLog(f"Database connected to {'Data/' + language + '.db'}")
 
+        self.data_initialise()
+
+        if full_init:
+            self.full_init()
+
+    def full_init(self):
+        DatabaseLog(f"Database full init")
         self.cur.execute('''CREATE TABLE IF NOT EXISTS Words
-                         (WordName TEXT PRIMARY KEY NOT NULL, 
-                         PhoneticEng TEXT,
-                         Description TEXT)
-                        ''')
+                                 (WordName TEXT PRIMARY KEY NOT NULL, 
+                                 PhoneticEng TEXT,
+                                 Description TEXT)
+                                ''')
 
         self.cur.execute('''CREATE TABLE IF NOT EXISTS WordSynEng
-                         (WordName TEXT NOT NULL, 
-                         EngSyn TEXT NOT NULL,
-                         PRIMARY KEY (WordName, EngSyn))
-                        ''')
+                                 (WordName TEXT NOT NULL, 
+                                 EngSyn TEXT NOT NULL,
+                                 PRIMARY KEY (WordName, EngSyn))
+                                ''')
 
         self.cur.execute('''CREATE TABLE IF NOT EXISTS WordSynLang
-                         (WordName TEXT NOT NULL, 
-                         LangSyn TEXT NOT NULL,
-                         PRIMARY KEY (WordName, LangSyn))
-                        ''')
+                                 (WordName TEXT NOT NULL, 
+                                 LangSyn TEXT NOT NULL,
+                                 PRIMARY KEY (WordName, LangSyn))
+                                ''')
 
         self.con.commit()
 
         DatabaseLog("Tables created")
+        self.set_data("last_change", str(time.time()))
+
+    def data_initialise(self):
+        DatabaseLog("Initialising LangData")
+
+        self.cur.execute('''CREATE TABLE IF NOT EXISTS LangData
+                                            (Key TEXT PRIMARY KEY NOT NULL,
+                                            Value TEXT NOT NULL
+                                            )''')
+
+        base_data = {
+            "base_lang": "eng",
+            "last_change": "0"
+        }
+
+        self.cur.execute('SELECT Key FROM LangData')
+        out = self.cur.fetchall()
+        out = [i[0] for i in out]
+
+        for k in base_data.keys():
+            if k not in out:
+                self.cur.execute('INSERT INTO LangData VALUES (?,?)', (k, base_data[k]))
+
+        self.con.commit()
+
+    def set_data(self, key: str, value: str):
+        DatabaseLog(f"Setting '{key}' to '{value}' in LangData")
+
+        self.cur.execute("UPDATE LangData SET Value = ? WHERE Key = ?", (value, key))
+        self.con.commit()
+
+    def get_data(self, key: str):
+        DatabaseLog(f"Getting value of '{key}' from LangData")
+
+        self.cur.execute("SELECT Value FROM LangData WHERE Key = ?", (key,))
+        out = self.cur.fetchone()
+        return out[0]
 
     def AddWord(self, word_name: str, phonetic_eng: str = "", description: str = "", lang_synonyms: List[str] = (),
                 eng_synonyms: List[str] = ()):
@@ -254,3 +280,21 @@ class Database:
         self.cur.execute('SELECT EngSyn FROM WordSynEng WHERE WordName = ?', (lang_word,))
         out = self.cur.fetchall()
         return [o[0] for o in out]
+
+
+def GetLanguageList() -> List[tuple]:
+    DatabaseLog("Getting list of languages...")
+    if not isdir("Data"):
+        DatabaseLog("Directory 'Data' does not exist. Creating now", 1)
+        os.mkdir("Data")
+
+    lang_date = []
+    for f in listdir("Data"):
+        if isfile(join("Data", f)):
+            if f.split(".")[1].lower() == "db":
+                l = f.split(".")[0]
+                lang_date.append((l, float(Database(l, False).get_data("last_change"))))
+
+    lang_date = sorted(lang_date, key=lambda i: i[1], reverse=True)
+
+    return lang_date
