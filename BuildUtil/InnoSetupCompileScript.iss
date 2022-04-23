@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Language Maker 2"
-#define MyAppVersion "0.41"
+#define MyAppVersion "0.47"
 #define MyAppPublisher "Robert Lucas"
 #define MyAppURL "about:blank"
 #define MyAppExeName "LanguageMaker2.exe"

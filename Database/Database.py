@@ -10,8 +10,6 @@ from .Word import Word
 from .DatabaseExceptions import WordNotFoundError, WordAlreadyExistsError, WordNameChangeReferenceError
 from logger import *
 
-# TODO: Use databse table as dictionary instead of .dbdata
-
 """
 class DatabaseData:
     def __init__(self, lang, expecting_file=True):
@@ -41,12 +39,12 @@ class DatabaseData:
 
 
 class Database:
-    def __init__(self, language: str, full_init = True):
+    def __init__(self, language: str, full_init=True):
         self.language = language
-        self.con = sqlite3.connect("Data/" + language + ".db")
+        self.con = sqlite3.connect("Data/" + language + ".lang")
         self.cur = self.con.cursor()
 
-        DatabaseLog(f"Database connected to {'Data/' + language + '.db'}")
+        DatabaseLog(f"Database connected to {'Data/' + language + '.lang'}")
 
         self.data_initialise()
 
@@ -291,7 +289,7 @@ def GetLanguageList() -> List[tuple]:
     lang_date = []
     for f in listdir("Data"):
         if isfile(join("Data", f)):
-            if f.split(".")[1].lower() == "db":
+            if f.split(".")[1].lower() == "lang":
                 l = f.split(".")[0]
                 lang_date.append((l, float(Database(l, False).get_data("last_change"))))
 

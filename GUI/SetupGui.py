@@ -1,3 +1,5 @@
+import time
+
 from nltk_util import download
 from tkinter import messagebox
 import os
@@ -15,6 +17,7 @@ from .MainGui import MainGui
 from .HelpWindow import HelpWindow
 
 from Database.Database import GetLanguageList
+from Database.Database import Database
 import utils
 from logger import *
 
@@ -129,15 +132,11 @@ class SetupGui:
                 return
 
         try:
-            shutil.copy(f"Data/{lang}.db", f"Data/{new_lang}.db")
-
-            try:
-                shutil.copy(f"Data/{lang}.dbdata", f"Data/{new_lang}.dbdata")
-            except FileNotFoundError:
-                DatabaseLog(f"Language '{lang}' has no dbdata file to copy", 1)
+            shutil.copy(f"Data/{lang}.lang", f"Data/{new_lang}.lang")
 
             DatabaseLog(f"Language '{lang}' duplicated (New name: '{new_lang}')")
             messagebox.showinfo("Success", f"Language '{lang}' duplicated")
+            Database(new_lang).set_data("last_change", str(time.time()))
             self.reload_gui()
         except Exception as e:
             DatabaseLog(f"Language duplication error: {e}")
@@ -151,13 +150,7 @@ class SetupGui:
     def delete_lang_confirm(self, lang):
         if self.lang_selected.get() == lang:
             try:
-                os.remove(f"Data/{lang}.db")
-
-                try:
-                    os.remove(f"Data/{lang}.dbdata")
-                except FileNotFoundError:
-                    DatabaseLog(f"Language '{lang}' has no dbdata file to delete", 1)
-
+                os.remove(f"Data/{lang}.lang")
                 DatabaseLog(f"Database '{lang}' deleted")
                 messagebox.showinfo("Success", f"Language '{lang}' deleted")
                 self.reload_gui()
