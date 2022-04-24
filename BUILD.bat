@@ -15,7 +15,7 @@ mkdir dist\main\GUI
 copy GUI\icon.ico dist\main\GUI\icon.ico
 Xcopy HelpText dist\main\HelpText\ /E /H /C /I
 mkdir dist\main\Data
-copy Data\TestLanguage.db dist\main\Data\TestLanguage.db
+copy Data\TestLanguage.lang dist\main\Data\TestLanguage.lang
 
 ren dist\main\main.exe LanguageMaker2.exe
 
